@@ -1,0 +1,20 @@
+{
+  "name": "no-soy-un-music-bot",
+  "version": "0.0.1",
+  "description": "Bot de musica que he creado con el codigo publico para que mas gente pueda descargarlo o pueda ver el codigo por si nececitan ayuda",
+  "main": "index.js",
+  "scripts": {
+    "start": "node ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adriabama06/no-soy-un-music-bot.git"
+  },
+  "keywords": ["discord.js", "music bot", "discord bot"],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/adriabama06/no-soy-un-music-bot/issues"
+  },
+  "homepage": "https://github.com/adriabama06/no-soy-un-music-bot#readme"
+}
