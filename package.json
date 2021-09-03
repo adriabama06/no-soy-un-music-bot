@@ -10,11 +10,22 @@
     "type": "git",
     "url": "git+https://github.com/adriabama06/no-soy-un-music-bot.git"
   },
-  "keywords": ["discord.js", "music bot", "discord bot"],
+  "keywords": [
+    "discord.js",
+    "music bot",
+    "discord bot"
+  ],
   "author": "",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/adriabama06/no-soy-un-music-bot/issues"
   },
-  "homepage": "https://github.com/adriabama06/no-soy-un-music-bot#readme"
+  "homepage": "https://github.com/adriabama06/no-soy-un-music-bot#readme",
+  "dependencies": {
+    "@discordjs/opus": "^0.6.0",
+    "@discordjs/rest": "*",
+    "discord-api-types": "^0.22.0",
+    "discord.js": "^13.1.0",
+    "mysql": "^2.18.1"
+  }
 }
