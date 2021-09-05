@@ -1,11 +1,15 @@
 const mysql = require('mysql');
 const config = require('./config.json');
-class MysqlDriver {
+class MysqlIntermediator {
     constructor() {
         /**
+         * @protected
          * @type {Map<string, {id: string, prefix: string, safesearch: number}>}
          */
         this.servers = new Map();
+        /**
+         * @protected
+         */
         this.connection = mysql.createConnection({
             host: config.mysql.host,
             user: config.mysql.username,
@@ -21,14 +25,14 @@ class MysqlDriver {
      * @param {string} id 
      * @returns {{id: string, prefix: string, safesearch: number}}
      */
-    async get(id) {
+    get(id) {
         return this.servers.get(id);
     }
     /**
      * @param {string} id 
      * @returns {boolean}
      */
-    async has(id) {
+    has(id) {
         return this.servers.has(id);
     }
 
@@ -46,11 +50,13 @@ class MysqlDriver {
             return false;
         }
         this.servers.set(id, { id: id, prefix: config.discord.defaultprefix, safesearch: config.youtube.defaultsafesearch });
+        console.log({ id: id, prefix: config.discord.defaultprefix, safesearch: config.youtube.defaultsafesearch });
         return true;
     }
 
     /**
      * @param {string} id 
+     * @param {string} prefix
      * @returns {Promise<{id: string, prefix: string, safesearch: number}>}
      */
     async setPrefix(id, prefix) {
@@ -61,6 +67,7 @@ class MysqlDriver {
     }
     /**
      * @param {string} id 
+     * @param {number} safesearch
      * @returns {Promise<{id: string, prefix: string, safesearch: number}>}
      */
     async setSafeSearch(id, safesearch) {
@@ -72,8 +79,9 @@ class MysqlDriver {
 
     async loadServers() {
         const results = await this.query(`SELECT * FROM ${config.mysql.table}`);
-        for(const result of results) {
+        for(const result of results) { 
             this.servers.set(result.id, result);
+            console.log(this.servers.get(result.id))
         }
         return;
     }
@@ -106,4 +114,4 @@ class MysqlDriver {
     }
 }
 
-module.exports = MysqlDriver;
+module.exports = MysqlIntermediator;

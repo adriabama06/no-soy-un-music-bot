@@ -1,3 +1,6 @@
+# Ignore CONFIG DEV
+config.json.dev
+
 # Logs
 logs
 *.log

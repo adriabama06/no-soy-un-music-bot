@@ -8,5 +8,6 @@ module.exports = {
      */
     run: async ({message, args, prefix}) => {
         await message.channel.send({ content: `Hola, tus argumentos son: ${args.length != 0 ? args.join(' - ') : 'no hay args :c'} y tu prefix es: ${prefix}` });
+        return;
     }
 }
