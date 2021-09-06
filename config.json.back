@@ -12,6 +12,11 @@
         "password": "CONTRASERÑA DE TU BASE DE DATOS MYSQL",
         "host": "DIRECCION IP DE TU MYSQL",
         "database": "NOMBRE DE LA BASE DE DATOS",
-        "table": "NOMBRE DE LA TABLA DE TU BASE DE DATOS"
+        "tables": {
+            "prefix": "PON EL NOMBRE DE LA TABLA DEL PREFIX",
+            "safesearch": "PON EL NOMBRE DE LA TABLA DEL SAFESEARCH",
+            "queues": "PON EL NOMBRE DE LA TABLA DE QUEUES",
+            "info": "PON EL NOMBRE DE LA TABLA DE INFO"
+        }
     }
 }
