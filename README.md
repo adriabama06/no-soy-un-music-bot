@@ -6,6 +6,6 @@ o
 ```npm i --save```
 
 Este proyecto usa:
-(discord.js)[https://github.com/discordjs/discord.js]
-(mysql)[https://github.com/mysqljs/mysql]
-(ytdl-core)[https://github.com/fent/node-ytdl-core]
+[discord.js](https://github.com/discordjs/discord.js)
+[mysql](https://github.com/mysqljs/mysql)
+[ytdl-core](https://github.com/fent/node-ytdl-core)
