@@ -3,7 +3,11 @@ const config = require('./config.json');
 const ytdl = require('ytdl-core');
 
 class MysqlIntermediator {
-    constructor() {
+    /**
+     * @param {number} kepaliveinterval
+     * @param {'seconds' | 'minutes' | 'hours'} time
+     */
+    constructor(kepaliveinterval = 30, time = 'minutes') {
         /**
          * @protected
          * @type {Map<string, {
@@ -26,8 +30,28 @@ class MysqlIntermediator {
             //connectTimeout: 2, // Pon timeout para el intento de conectarse
         });
 
+        /**
+         * @type {number}
+         */
+        this.timeinterval = 30 * 1000 * 60;
+
         this.connection.connect();
         this.loadServers();
+        if(time.toLowerCase() === 'seconds') {
+            this.timeinterval = kepaliveinterval * 1000;
+        }
+        if(time.toLowerCase() === 'minutes') {
+            this.timeinterval = kepaliveinterval * 1000 * 60;
+        }
+        if(time.toLowerCase() === 'hours') {
+            this.timeinterval = kepaliveinterval * 1000 * 60 * 60;
+        }
+        /**
+         * @protected
+         */
+        this.interval = setInterval(() => {
+            this.query(`SELECT * FROM \`${config.mysql.tables.prefix}\``);
+        }, this.timeinterval);
     }
 
     /**
@@ -46,39 +70,42 @@ class MysqlIntermediator {
     }
 
     /**
-     * @param {string | number} id
+     * @param {string} id
      * @param {string} prefix
+     * @param {string} user
      */
     async setPrefix(id, prefix, user = '%false%') {
         const server = this.servers.get(id);
         server.prefix.prefix = prefix;
         server.prefix.user = user;
-        await this.query(`UPDATE ${config.mysql.tables.prefix} SET \`prefix\`= '${prefix}', \`user\` = ${user} WHERE \`id\` = '${id}'`);
+        await this.query(`UPDATE ${config.mysql.tables.prefix} SET \`prefix\`= '${prefix}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
         return server;
     }
 
     /**
-     * @param {string | number} id
+     * @param {string} id
      * @param {string} safesearch
+     * @param {string} user
      */
     async setSafeSearch(id, safesearch, user = '%false%') {
         const server = this.servers.get(id);
         server.safesearch.safesearch = safesearch;
         server.queues.user = user;
-        await this.query(`UPDATE ${config.mysql.tables.safesearch} SET \`safesearch\`= '${safesearch}', \`user\` = ${user} WHERE \`id\` = '${id}'`);
+        await this.query(`UPDATE ${config.mysql.tables.safesearch} SET \`safesearch\`= '${safesearch}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
         return server;
     }
 
     /**
-     * @param {string | number} id
+     * @param {string} id
      * @param {string[]} queue 
-     * Please give and string array **only** with VideoId https://youtube.com/watch?v=**VIDEOID**
+     * Please give and string array **only** with VideoId : youtube.com/watch?v=**VIDEOID**
+     * @param {string} user
      */
     async setQueue(id, queue, user = '%false%') {
         const server = this.servers.get(id);
         server.queues.queue = queue;
         server.queues.user = user;
-        await this.query(`UPDATE ${config.mysql.tables.queues} SET \`queue\`= '${JSON.stringify(queue)}', \`user\` = ${user} WHERE \`id\` = '${id}'`);
+        await this.query(`UPDATE ${config.mysql.tables.queues} SET \`queue\` = '${JSON.stringify(queue)}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
         return server;
     }
 
@@ -90,7 +117,7 @@ class MysqlIntermediator {
     async setInfo(id, user) {
         const server = this.servers.get(id);
         server.info.user = user;
-        await this.query(`UPDATE ${config.mysql.tables.info} SET \`user\` = ${user} WHERE \`id\` = '${id}'`);
+        await this.query(`UPDATE ${config.mysql.tables.info} SET \`user\` = '${user}' WHERE \`id\` = '${id}'`);
         return server;
     }
 
@@ -104,13 +131,18 @@ class MysqlIntermediator {
             return false;
         }
 
-        const result = await this.query(
-        `INSERT INTO ${config.mysql.tables.prefix} (\`id\`, \`prefix\`, \`user\`) VALUES ('${id}', '${config.discord.defaultprefix}', '${user}');
-        INSERT INTO ${config.mysql.tables.safesearch} (\`id\`, \`safesearch\`, \`user\`) VALUES ('${id}', '${config.youtube.defaultsafesearch}', '${user}');
-        INSERT INTO ${config.mysql.tables.info} (\`id\`, \`user\`) VALUES ('${id}', '${user}');
-        INSERT INTO ${config.mysql.tables.queues} (\`id\`, \`queue\`, \`user\`) VALUES ('${id}', '${JSON.stringify([])}', '${user}');`
-        );
-        if(typeof results === 'string' && results === 'error') {
+        var sqls = [
+            `INSERT INTO ${config.mysql.tables.prefix} (\`id\`, \`prefix\`, \`user\`) VALUES ('${id}', '${config.discord.defaultprefix}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.safesearch} (\`id\`, \`safesearch\`, \`user\`) VALUES ('${id}', '${config.youtube.defaultsafesearch}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.info} (\`id\`, \`user\`) VALUES ('${id}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.queues} (\`id\`, \`queue\`, \`user\`) VALUES ('${id}', '${JSON.stringify([])}', '${user}');`
+        ];
+        var results = [];
+        for(const sql of sqls) {
+            const result = await this.query(sql);
+            results.push(result);
+        }
+        if(results.includes('error')) {
             return false;
         }
         this.servers.set(id, {
@@ -122,8 +154,38 @@ class MysqlIntermediator {
         return true;
     }
 
+    /**
+     * @returns {Promise<true> | false}
+     * @param {string} id
+     */
+    async remove(id) {
+        if(!this.servers.has(id)) {
+            return false;
+        }
+
+        var sqls = [
+            `DELETE FROM ${config.mysql.tables.prefix} WHERE \`id\` = '${id}';`,
+            `DELETE FROM ${config.mysql.tables.safesearch} WHERE \`id\` = '${id}';`,
+            `DELETE FROM ${config.mysql.tables.info} WHERE \`id\` = '${id}';`,
+            `DELETE FROM ${config.mysql.tables.queues} WHERE \`id\` = '${id}';`
+        ];
+        var results = [];
+        for(const sql of sqls) {
+            const result = await this.query(sql);
+            results.push(result);
+        }
+        if(results.includes('error')) {
+            return false;
+        }
+        this.servers.delete(id);
+        return true;
+    }
+
     async loadServers() {
         const prefix = await this.query(`SELECT * FROM ${config.mysql.tables.prefix}`);
+        if(typeof prefix === 'string' && prefix === 'no-servers') {
+            return;
+        }
         const safesearch = await this.query(`SELECT * FROM ${config.mysql.tables.safesearch}`);
         const queues = await this.query(`SELECT * FROM ${config.mysql.tables.queues}`);
         const info = await this.query(`SELECT * FROM ${config.mysql.tables.info}`);
@@ -133,8 +195,7 @@ class MysqlIntermediator {
         }
         for(var i = 0; i < prefix.length; i++) { 
             this.servers.set(prefix[i].id, servers[i]);
-            console.log(await this.parsequeue(prefix[i].id));
-            console.log(this.servers.get(prefix[i].id));
+            await this.parsequeue(prefix[i].id);
         }
         return;
     }
@@ -146,6 +207,9 @@ class MysqlIntermediator {
      */
     async reloadServers() {
         const prefix = await this.query(`SELECT * FROM ${config.mysql.tables.prefix}`);
+        if(typeof prefix === 'string' && prefix === 'no-servers') {
+            return;
+        }
         const safesearch = await this.query(`SELECT * FROM ${config.mysql.tables.safesearch}`);
         const queues = await this.query(`SELECT * FROM ${config.mysql.tables.queues}`);
         const info = await this.query(`SELECT * FROM ${config.mysql.tables.info}`);
@@ -156,8 +220,7 @@ class MysqlIntermediator {
         this.servers.clear();
         for(var i = 0; i < prefix.length; i++) { 
             this.servers.set(prefix[i].id, servers[i]);
-            console.log(await this.parsequeue(prefix[i].id));
-            console.log(this.servers.get(prefix[i].id));
+            await this.parsequeue(prefix[i].id);
         }
         return;
     }
