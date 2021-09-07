@@ -29,6 +29,7 @@
     "discord.js": "^13.1.0",
     "libsodium-wrappers": "^0.7.9",
     "mysql": "^2.18.1",
+    "request": "^2.88.2",
     "ytdl-core": "^4.9.1"
   }
 }
