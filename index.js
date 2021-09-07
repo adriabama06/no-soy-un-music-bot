@@ -31,7 +31,6 @@ var servers = new Map();
 client.on('ready', async () => {
     commandHandler.loadCommands("cmds", commands, alias);
     console.log(`Bot listo como ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
-    console.log(alias.keys());
 });
 
 client.on('messageCreate', async (message) => {
@@ -64,7 +63,7 @@ client.on('messageCreate', async (message) => {
     if(!servers.has(message.guild.id)) {
         servers.set(message.guild.id, new ServerManager());
     }
-
+    
     if(commands.has(cmd)) {
         commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
         return;

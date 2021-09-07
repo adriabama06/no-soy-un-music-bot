@@ -2,14 +2,16 @@ const Discord = require('discord.js');
 const DiscordAudio = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
 
+const path = require('path');
+
 class ServerManager {
     constructor() {
         /**
-         * @type {ytdl.videoInfo}
+         * @type {ytdl.videoInfo[]}
          */
         this.songs = [];
         /**
-         * @type {Discord}
+         * @type {DiscordAudio.PlayerSubscription}
          */
         this.dispatcher;
         this.isdispatcher = false;
@@ -23,7 +25,11 @@ class ServerManager {
          */
         this.audioplayer;
         this.isaudioplayer = false;
-
+        /**
+         * @type {DiscordAudio.AudioResource}
+         */
+        this.audioresource;
+        this.isaudioresoruce = false;
     }
 
     /**
@@ -36,6 +42,7 @@ class ServerManager {
             guildId: channel.guild.id,
             adapterCreator: channel.guild.voiceAdapterCreator,
         });
+        this.isconnection = true;
         return this.connection;
     }
     /**
@@ -60,24 +67,73 @@ class ServerManager {
         return this.connection;
     }
     endConnection() {
+        if(this.isconnection === false) {
+            return;
+        }
         this.connection.destroy();
+        this.connection = undefined;
+        this.isconnection = false;
+        return;
     }
     createPlayer() {
         this.audioplayer = DiscordAudio.createAudioPlayer();
+        return;
     }
     /**
      * @param {boolean} force 
      */
     endPlayer(force = false) {
-        this.audioplayer.stop(force);
-    }
-    /**
-     * @param {DiscordAudio.VoiceConnection} connection 
-     */
-    play(connection) {
-        if(this.isaudioplayer === false) {
-            this.audioplayer.play(this.songs[0]);
+        if(this.isaudioplayer === false && force === false) {
+            return;
         }
+        this.audioplayer.stop(force);
+        this.audioplayer = undefined;
+        this.isaudioplayer = false;
+        return;
+    }
+    endAudioSource() {
+        if(this.isaudioresoruce === false) {
+            return;
+        }
+        this.audioresource.audioPlayer.stop();
+        this.audioresource = undefined;
+        this.isaudioresoruce = false;
+        return;
+    }
+    play() {
+        if(this.isaudioresoruce === true) {
+            this.audioresource.audioPlayer.stop();
+            this.audioresource = undefined;
+            this.isaudioresoruce = false;
+        }
+
+        if(this.audioplayer === undefined) {
+            this.createPlayer();
+        }
+
+        this.audioresource = DiscordAudio.createAudioResource(ytdl(this.songs[0].videoDetails.video_url));
+        this.isaudioresoruce = true;
+        this.audioplayer.play(this.audioresource);
+        this.isaudioplayer = true;
+        if(this.isdispatcher === false) {
+            this.dispatcher = this.connection.subscribe(this.audioplayer);
+            this.isdispatcher = true;
+        }
+        return;
+    }
+    pause() {
+        this.dispatcher.player.pause(true);
+        return;
+    }
+    unpause() {
+        this.dispatcher.player.unpause();
+        return;
+    }
+    end() {
+        this.endPlayer();
+        this.endAudioSource();
+        this.endConnection();
+        return;
     }
 }
 

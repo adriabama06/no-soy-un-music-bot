@@ -13,7 +13,7 @@ const waitReaction = async (message, react, whocando, removeAll = true, deleteMs
         const filter = (reaction, user) => {
             return (reaction.emoji.name == react) && (user.id == whocando);
         }
-        const collector = message.createReactionCollector(filter, { time: time });
+        const collector = message.createReactionCollector({filter: filter, time: time });
         collector.on('collect', async (reaction, user) => {
             if(!user.id == whocando || user.id == message.client.user.id) {
                 return;
@@ -22,7 +22,7 @@ const waitReaction = async (message, react, whocando, removeAll = true, deleteMs
                 collector.emit('end');
             }
         });
-        collector.on('end', async (collected, reason) => {
+        collector.once('end', async (collected, reason) => {
             if(removeAll === true) {
                 await message.reactions.removeAll();
             }

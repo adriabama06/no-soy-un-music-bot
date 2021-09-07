@@ -21,6 +21,7 @@ module.exports = {
             **Reinicia el prefix al original (${config.discord.defaultprefix})**
             - \`${prefix}prefix reset\``);
             embed.setTimestamp();
+            embed.setColor("RANDOM");
             const msg = await message.channel.send({
                 embeds: [embed]
             });
@@ -39,6 +40,7 @@ module.exports = {
                 **Reinicia el prefix al original (${config.discord.defaultprefix})**
                 - \`${prefix}prefix reset\``);
                 embed.setTimestamp();
+                embed.setColor("RANDOM");
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
@@ -52,6 +54,7 @@ module.exports = {
             embed.setTitle("Prefix cambiado");
             embed.setDescription(`Ahora el nuevo prefix es: ${args[1]}`);
             embed.setTimestamp();
+            embed.setColor("RANDOM");
             const msg = await message.channel.send({
                 embeds: [embed]
             });
@@ -65,6 +68,7 @@ module.exports = {
             embed.setTitle("Prefix reiniciado");
             embed.setDescription(`Ahora el nuevo prefix es: ${config.discord.defaultprefix}`);
             embed.setTimestamp();
+            embed.setColor("RANDOM");
             const msg = await message.channel.send({
                 embeds: [embed]
             });
