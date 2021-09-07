@@ -71,5 +71,6 @@ module.exports = {
             await waitReaction(msg, "❌", message.author.id);
             return;
         }
+        return;
     }
 }

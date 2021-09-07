@@ -2,7 +2,7 @@
 Bot de musica que he creado con el codigo publico para que mas gente pueda descargarlo o pueda ver el codigo por si nececitan ayuda
 Ejecutar tras descargar para instalar los npm:
 ```cmd
-npm i --save mysql discord.js @discordjs/rest discord-api-types @discordjs/opus ytdl-core
+npm i --save mysql discord.js @discordjs/rest @discordjs/voice discord-api-types @discordjs/opus ytdl-core
 ```
 o
 ```cmd
@@ -15,7 +15,7 @@ Por ahora mientras programo el bot tengo un archivo en el que tengo mi configura
 ## Objetivos:
 
 - [x] crear cliente para conectar la base de datos [MariaDB](https://mariadb.org/) con el bot
-- [ ] preparar todo sobre los prefix y conecciones con la base de datos
+- [x] preparar todo sobre los prefix y conecciones con la base de datos
 - [ ] poner comandos de musica: `play - stop - queue - pause - resume - safesearch`
 - [ ] guardar informacion de cuando el bot ha sido invitado y guardar queues
 - [ ] ya ire añadiendo objetivos

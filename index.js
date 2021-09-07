@@ -1,9 +1,13 @@
-const { Client, Intents} = require('discord.js');
+/**
+ * @see https://github.com/adriabama06/no-soy-un-music-bot
+ */
+
+const { Client, Intents } = require('discord.js');
 
 const config = require('./config.json');
 const commandHandler = require('./commandHandler.js');
 const MysqlIntermediator = require('./mysql.js');
-
+const ServerManager = require('./servers');
 const Mysql = new MysqlIntermediator();
 
 const client = new Client({
@@ -18,6 +22,11 @@ var commands = new Map();
  * @type {Map<string, {name: string, description: string, alias: string[], run: () => void}>}
  */
 var alias = new Map();
+
+/**
+ * @type {Map<string, ServerManager}
+ */
+var servers = new Map();
 
 client.on('ready', async () => {
     commandHandler.loadCommands("cmds", commands, alias);
@@ -52,12 +61,16 @@ client.on('messageCreate', async (message) => {
 
     console.log(`${message.author.username}#${message.author.discriminator} (${message.author.id}) : ${message.content}`);
 
+    if(!servers.has(message.guild.id)) {
+        servers.set(message.guild.id, new ServerManager());
+    }
+
     if(commands.has(cmd)) {
-        commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server});
+        commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
         return;
     }
     if(alias.has(cmd)) {
-        alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server});
+        alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
         return;
     }
 });

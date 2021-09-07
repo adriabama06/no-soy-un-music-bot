@@ -1,5 +1,6 @@
 # Ignore CONFIG DEV
 config.json.dev
+testaudio.mp3
 
 # Logs
 logs

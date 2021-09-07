@@ -1,3 +1,8 @@
+/**
+ * @author adriabama06
+ * @see https://github.com/adriabama06/no-soy-un-music-bot
+ */
+
 const mysql = require('mysql');
 const config = require('./config.json');
 const ytdl = require('ytdl-core');
