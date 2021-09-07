@@ -110,7 +110,7 @@ class MysqlIntermediator {
     }
 
     /**
-     * @param {string | number} id
+     * @param {string} id
      * @param {string} user 
      * Please give and string array **only** with VideoId https://youtube.com/watch?v=**VIDEOID**
      */

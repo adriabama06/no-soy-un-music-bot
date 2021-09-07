@@ -1,12 +1,14 @@
 const Discord = require('discord.js');
 const MysqlIntermediator = require('../mysql.js');
+const { waitReaction } = require('../util.js');
+
 module.exports = {
     name: "prefix",
     description: "Cambia el prefix de tu servidor",
     example: "{prefix}prefix set {nuevo prefix}",
     alias: ["prefijo"],
     /**
-     * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator}} param0 
+     * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator, server}} param0 
      */
     run: async ({message, args, prefix, Mysql, config}) => {
         if(!args[0]) {
@@ -22,21 +24,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await msg.react("❌");
-            const filter = (reaction, user) => {
-                return ["❌"].includes(reaction.emoji.name) && user.id === message.author.id;
-            }
-            const collector = msg.createReactionCollector(filter, { time: 120000 });
-            collector.on('collect', async (reaction, user) => {
-                if(user.id != message.author.id) return;
-                if(reaction.emoji.name === '❌') {
-                    collector.emit('end');
-                }
-            });
-            collector.on('end', async (collected, reason) => {
-                await msg.reactions.removeAll();
-                await msg.delete({ timeout: 1000 });
-            });
+            await waitReaction(msg, "❌", message.author.id);
             return;
         }
 
@@ -54,25 +42,11 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                await msg.react("❌");
-                const filter = (reaction, user) => {
-                    return ["❌"].includes(reaction.emoji.name) && user.id === message.author.id;
-                }
-                const collector = msg.createReactionCollector(filter, { time: 120000 });
-                collector.on('collect', async (reaction, user) => {
-                    if(user.id != message.author.id) return;
-                    if(reaction.emoji.name === '❌') {
-                        collector.emit('end');
-                    }
-                });
-                collector.on('end', async (collected, reason) => {
-                    await msg.reactions.removeAll();
-                    await msg.delete({ timeout: 1000 });
-                });
+                await waitReaction(msg, "❌", message.author.id);
                 return;
             }
 
-            await Mysql.setPrefix(message.guild.id, args[1]);
+            await Mysql.setPrefix(message.guild.id, args[1], message.author.id);
 
             const embed = new Discord.MessageEmbed();
             embed.setTitle("Prefix cambiado");
@@ -81,25 +55,11 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await msg.react("❌");
-            const filter = (reaction, user) => {
-                return ["❌"].includes(reaction.emoji.name) && user.id === message.author.id;
-            }
-            const collector = msg.createReactionCollector(filter, { time: 120000 });
-            collector.on('collect', async (reaction, user) => {
-                if(user.id != message.author.id) return;
-                if(reaction.emoji.name === '❌') {
-                    collector.emit('end');
-                }
-            });
-            collector.on('end', async (collected, reason) => {
-                await msg.reactions.removeAll();
-                await msg.delete({ timeout: 1000 });
-            });
+            await waitReaction(msg, "❌", message.author.id);
             return;
         }
         if(args[0].toLowerCase() === 'reset') {
-            await Mysql.setPrefix(message.guild.id, config.discord.defaultprefix);
+            await Mysql.setPrefix(message.guild.id, config.discord.defaultprefix, message.author.id);
 
             const embed = new Discord.MessageEmbed();
             embed.setTitle("Prefix reiniciado");
@@ -108,21 +68,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await msg.react("❌");
-            const filter = (reaction, user) => {
-                return ["❌"].includes(reaction.emoji.name) && user.id === message.author.id;
-            }
-            const collector = msg.createReactionCollector(filter, { time: 120000 });
-            collector.on('collect', async (reaction, user) => {
-                if(user.id != message.author.id) return;
-                if(reaction.emoji.name === '❌') {
-                    collector.emit('end');
-                }
-            });
-            collector.on('end', async (collected, reason) => {
-                await msg.reactions.removeAll();
-                await msg.delete({ timeout: 1000 });
-            });
+            await waitReaction(msg, "❌", message.author.id);
             return;
         }
     }

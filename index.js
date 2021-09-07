@@ -33,9 +33,17 @@ client.on('messageCreate', async (message) => {
         return;
     }
 
-    await Mysql.add(message.guild.id);
+    if(!Mysql.has(message.guild.id)) {
+        await Mysql.add(message.guild.id, message.author.id);
+    }
 
-    var prefix = Mysql.get(message.guild.id).prefix;
+    const server = Mysql.get(message.guild.id);
+
+    if(server.info.user === '%false%') {
+        await Mysql.setInfo(message.guild.id, message.author.id);
+    }
+
+    var prefix = server.prefix.prefix;
 
     if(!message.content.startsWith(prefix)) return;
 
@@ -45,11 +53,17 @@ client.on('messageCreate', async (message) => {
     console.log(`${message.author.username}#${message.author.discriminator} (${message.author.id}) : ${message.content}`);
 
     if(commands.has(cmd)) {
-        commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config});
+        commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server});
+        return;
     }
     if(alias.has(cmd)) {
-        alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config});
+        alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server});
+        return;
     }
+});
+
+client.on('guildCreate', async (guild) => {
+    await Mysql.add(guild.id);
 });
 
 client.login(config.discord.token);
