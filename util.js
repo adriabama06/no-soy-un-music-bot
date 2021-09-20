@@ -49,9 +49,10 @@ const messageDelete = async (message, userid, timeout = 240000) => {
         const row = new Discord.MessageActionRow().addComponents(
             new Discord.MessageButton()
             .setCustomId('delete')
-            .setLabel('delete')
-            .setStyle('SUCCESS'));
+            .setEmoji('❌')
+            .setStyle('SECONDARY'));
         await message.edit({components: [row]});
+
         const filter = (i) => i.customId === 'delete' && i.user.id === userid;
 
         const collector = message.createMessageComponentCollector({ filter, time: timeout });

@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const ServerManager = require('../servers.js');
 const MysqlIntermediator = require('../mysql.js');
-const { waitReaction } = require('../util.js');
+const { messageDelete } = require('../util.js');
 const ytdl = require('ytdl-core');
 const search = require('../search.js');
 
@@ -23,7 +23,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await waitReaction(msg, "❌", message.author.id, true, true, 15000);
+            await messageDelete(msg, message.author.id);
             return;
         }
         if(args[0]) {
@@ -45,7 +45,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                await waitReaction(msg, "❌", message.author.id, true, true, 15000);
+                await messageDelete(msg, message.author.id);
             } else {
                 Music.songs.push(video);
                 const embed = new Discord.MessageEmbed();
@@ -55,7 +55,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                await waitReaction(msg, "❌", message.author.id, true, true, 15000);
+                await messageDelete(msg, message.author.id);
             }
             return;
         }
@@ -85,25 +85,38 @@ module.exports = {
         embed.setDescription(menu.length === 0 ? 'no hay ninguna cancion' : menu[0]);
         embed.setTimestamp();
         embed.setColor("RANDOM");
+        
         var msg = await message.channel.send({
             embeds: [embed],
         });
         if(Music.songs.length > capazidad) {
-            await msg.react('⬅');
-            await msg.react('➡');
-            await msg.react('❌');
-            const filter = (reaction, user) => {
-                return ['⬅', '➡', '❌'].includes(reaction.emoji.name) && !user.bot && user.id != client.user.id;
-            }
+            var row = new Discord.MessageActionRow()
+            row.addComponents(
+                new Discord.MessageButton()
+                .setCustomId('back')
+                .setEmoji('⬅')
+                .setStyle('SUCCESS'))
+            row.addComponents(
+                new Discord.MessageButton()
+                .setCustomId('next')
+                .setEmoji('➡')
+                .setStyle('SUCCESS'))
+            row.addComponents(
+                new Discord.MessageButton()
+                .setCustomId('exit')
+                .setEmoji('❌')
+                .setStyle('SECONDARY'));
+            await msg.edit({ components: [row] });
+            const filter = (i) => (i.customId === 'back' || i.customId === 'next' || i.customId === 'exit') && (i.user.id === message.author.id);
             var index = 0;
-            const collector = msg.createReactionCollector({filter: filter, time: 4 * 1000 * 60 });
-            collector.on('collect', async (reaction, user) => {
-                await reaction.users.remove(user.id);
-                if(reaction.emoji.name === '❌') {
-                    collector.stop();
+            const collector = msg.createMessageComponentCollector({filter, time: 4 * 1000 * 60 });
+            collector.on('collect', async (i) => {
+                await i.deferUpdate();
+                if(i.customId === 'exit') {
+                    collector.stop('user');
                     return;
                 }
-                if(reaction.emoji.name === '⬅') {
+                if(i.customId === 'back') {
                     if(index === 0 || index < 0) {
                         index = menu.length-1;
                         embed.setTitle(`${index+1} - queue : ${message.guild.name}`);
@@ -119,7 +132,7 @@ module.exports = {
                             embeds: [embed]
                         });
                     }
-                } else if(reaction.emoji.name === '➡') {
+                } else if(i.customId === 'next') {
                     if(index === menu.length-1 || index > menu.length-1) {
                         index = 0;
                         embed.setTitle(`${index+1} - queue : ${message.guild.name}`);
@@ -138,11 +151,10 @@ module.exports = {
                 }
             });
             collector.on('end', async () => {
-                await msg.reactions.removeAll();
-                await msg.delete({ timeout: 5000 });
+                await msg.delete();
             });
         } else {
-            await waitReaction(msg, '❌', message.author.id, true, true, 4 * 1000 * 60);
+            await messageDelete(msg, message.author.id, 4 * 1000 * 60);
         }
         return;
     }

@@ -29,11 +29,11 @@ module.exports = async (title, safesearch = "1") => {
                 console.log(err);
                 r(false);
                 return;
-            };
-            if(!body.items[0]) {
+            }
+            if(!body.items || !body.items[0]) {
                 r(false);
                 return;
-            };
+            }
             r("https://www.youtube.com/watch?v=" + body.items[0].id.videoId);
             return;
         });
