@@ -63,6 +63,7 @@ module.exports = {
         }
         if(Music.isdispatcher === false || Music.dispatcher === undefined) {
             Music.play();
+            Music.setLogChannel(message.channel);
         }
         return;
     }

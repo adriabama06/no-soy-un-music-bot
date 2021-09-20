@@ -53,7 +53,7 @@ const messageDelete = async (message, userid, timeout = 240000) => {
             .setStyle('SECONDARY'));
         await message.edit({components: [row]});
 
-        const filter = (i) => i.customId === 'delete' && i.user.id === userid;
+        const filter = (i) => i.customId === 'delete' && (userid === undefined ? true : i.user.id === userid);
 
         const collector = message.createMessageComponentCollector({ filter, time: timeout });
 

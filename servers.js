@@ -1,11 +1,17 @@
+/**
+ * @see https://github.com/discordjs/voice
+ * @see https://discordjs.guide/voice/
+ */
 const Discord = require('discord.js');
 const DiscordAudio = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
-
+const { EventEmitter } = require('events');
 const path = require('path');
+const { messageDelete } = require('./util.js');
 
-class ServerManager {
+class ServerManager extends EventEmitter {
     constructor() {
+        super();
         /**
          * @type {ytdl.videoInfo[]}
          */
@@ -30,6 +36,11 @@ class ServerManager {
          */
         this.audioresource;
         this.isaudioresoruce = false;
+        /**
+         * @type {Discord.TextBasedChannels}
+         */
+        this.channel;
+        this.ischannel = false;
     }
 
     /**
@@ -101,7 +112,7 @@ class ServerManager {
         return;
     }
     play() {
-        if(this.isaudioresoruce === true) {
+        if(this.isaudioresoruce === true && this.audioresource.audioPlayer) {
             this.audioresource.audioPlayer.stop();
             this.audioresource = undefined;
             this.isaudioresoruce = false;
@@ -110,7 +121,6 @@ class ServerManager {
         if(this.audioplayer === undefined) {
             this.createPlayer();
         }
-
         this.audioresource = DiscordAudio.createAudioResource(ytdl(this.songs[0].videoDetails.video_url));
         this.isaudioresoruce = true;
         this.audioplayer.play(this.audioresource);
@@ -119,6 +129,40 @@ class ServerManager {
             this.dispatcher = this.connection.subscribe(this.audioplayer);
             this.isdispatcher = true;
         }
+        this.audioplayer.once(DiscordAudio.AudioPlayerStatus.Idle, async (oldState, newState) => {
+            if(!this.songs[0]) {
+                this.songs = [];
+                this.end();
+                return;
+            }
+            if(!this.songs[1]) {
+                if(this.ischannel) {
+                    const embed = new Discord.MessageEmbed();
+                    embed.setDescription(`Acaba de sonar la ultima cancion:
+                    [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
+                    embed.setTimestamp();
+                    embed.setColor("RANDOM");
+                    const msg = await this.channel.send({
+                        embeds: [embed]
+                    });
+                    await messageDelete(msg, undefined, 15000);
+                }
+            }
+            const embed = new Discord.MessageEmbed();
+            embed.setDescription(`Acaba de sonar:
+            [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})
+            
+            La siguiente es:
+            [${this.songs[1].videoDetails.title}](${this.songs[1].videoDetails.video_url})`);
+            embed.setTimestamp();
+            embed.setColor("RANDOM");
+            const msg = await this.channel.send({
+                embeds: [embed]
+            });
+            messageDelete(msg, undefined, 15000);
+            this.songs.shift();
+            this.play();
+        });
         return;
     }
     pause() {
@@ -133,6 +177,13 @@ class ServerManager {
         this.endPlayer();
         this.endAudioSource();
         this.endConnection();
+        return;
+    }
+    /**
+     * @param {Discord.TextBasedChannels | Discord.TextChannel | Discord.GuildChannel} channel
+     */
+    setLogChannel(channel) {
+        this.channel = channel;
         return;
     }
 }
