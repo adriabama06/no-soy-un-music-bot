@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const ServerManager = require('../servers.js');
 const MysqlIntermediator = require('../mysql.js');
-const { waitReaction } = require('../util.js');
+const { messageDelete } = require('../util.js');
 
 module.exports = {
     name: "leave",
@@ -21,7 +21,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await waitReaction(msg, "❌", message.author.id);
+            await messageDelete(msg, message.author.id);
             return;
         }
         if(Music.isconnection === false) {
@@ -32,7 +32,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await waitReaction(msg, "❌", message.author.id, true, true, 15000);
+            await messageDelete(msg, message.author.id);
             return;
         }
         Music.endConnection();
@@ -44,7 +44,7 @@ module.exports = {
         const msg = await message.channel.send({
             embeds: [embed]
         });
-        await waitReaction(msg, "❌", message.author.id, true, true, 15000);
+        await messageDelete(msg, message.author.id, 15000);
         return;
     }
 }

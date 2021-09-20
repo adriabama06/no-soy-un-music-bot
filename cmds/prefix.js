@@ -1,6 +1,6 @@
 const Discord = require('discord.js');
 const MysqlIntermediator = require('../mysql.js');
-const { waitReaction } = require('../util.js');
+const { messageDelete } = require('../util.js');
 
 module.exports = {
     name: "prefix",
@@ -25,7 +25,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await waitReaction(msg, "❌", message.author.id);
+            await messageDelete(msg, message.author.id);
             return;
         }
 
@@ -44,7 +44,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                await waitReaction(msg, "❌", message.author.id);
+                await messageDelete(msg, message.author.id);
                 return;
             }
 
@@ -58,7 +58,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await waitReaction(msg, "❌", message.author.id);
+            await messageDelete(msg, message.author.id);
             return;
         }
         if(args[0].toLowerCase() === 'reset') {
@@ -72,7 +72,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await waitReaction(msg, "❌", message.author.id);
+            await messageDelete(msg, message.author.id);
             return;
         }
         return;

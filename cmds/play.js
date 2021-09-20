@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const ServerManager = require('../servers.js');
 const MysqlIntermediator = require('../mysql.js');
-const { waitReaction } = require('../util.js');
+const { messageDelete } = require('../util.js');
 const ytdl = require('ytdl-core');
 const search = require('../search.js');
 
@@ -23,7 +23,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await waitReaction(msg, "❌", message.author.id, true, true, 15000);
+            await messageDelete(msg, message.author.id, 15000);
             return;
         }
         if(args[0]) {
@@ -45,7 +45,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                waitReaction(msg, "❌", message.author.id, true, true, 15000);
+                messageDelete(msg, message.author.id, 15000);
             } else {
                 Music.songs.push(video);
                 const embed = new Discord.MessageEmbed();
@@ -55,7 +55,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                waitReaction(msg, "❌", message.author.id, true, true, 15000);
+                messageDelete(msg, message.author.id, 15000);
             }
         }
         if(Music.isconnection === false || Music.connection === undefined) {

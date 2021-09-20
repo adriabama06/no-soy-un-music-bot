@@ -41,7 +41,7 @@ const waitReaction = async (message, react, whocando, removeAll = true, deleteMs
 /**
  * @param {Discord.Message} message 
  * @param {string} userid
- * @param {number} timeout
+ * @param {number} timeout optional defaut 240000 (4 minutes)
  * @returns {Promise<boolean>}
  */
 const messageDelete = async (message, userid, timeout = 240000) => {

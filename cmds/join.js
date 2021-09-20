@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const ServerManager = require('../servers.js');
 const MysqlIntermediator = require('../mysql.js');
-const { waitReaction, messageDelete } = require('../util.js');
+const { messageDelete } = require('../util.js');
 
 module.exports = {
     name: "join",
