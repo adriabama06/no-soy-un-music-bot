@@ -38,6 +38,43 @@ const waitReaction = async (message, react, whocando, removeAll = true, deleteMs
     });
 }
 
+/**
+ * @param {Discord.Message} message 
+ * @param {string} userid
+ * @param {number} timeout
+ * @returns {Promise<boolean>}
+ */
+const messageDelete = async (message, userid, timeout = 240000) => {
+    return new Promise(async (resolve) => {
+        const row = new Discord.MessageActionRow().addComponents(
+            new Discord.MessageButton()
+            .setCustomId('delete')
+            .setLabel('delete')
+            .setStyle('SUCCESS'));
+        await message.edit({components: [row]});
+        const filter = (i) => i.customId === 'delete' && i.user.id === userid;
+
+        const collector = message.createMessageComponentCollector({ filter, time: timeout });
+
+        collector.on('collect', async (i) => {
+            if (i.customId === 'delete') {
+                await i.deferUpdate();
+                collector.stop('user');
+            }
+        });
+        
+        collector.on('end', async (collected, reason) => {
+            await message.delete();
+            if(reason && reason === 'user') {
+                resolve(true);
+            } else {
+                resolve(false);
+            }
+        });
+    });
+}
+
 module.exports = {
     waitReaction,
+    messageDelete,
 }
