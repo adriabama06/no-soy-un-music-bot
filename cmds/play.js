@@ -13,7 +13,7 @@ module.exports = {
     /**
      * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator, server, servers: Map<string, ServerManager>}} param0
      */
-    run: async ({message, servers, prefix, args}) => {
+    run: async ({message, servers, prefix, args, server}) => {
         const Music = servers.get(message.guild.id);
         if(!message.member.voice.channel) {
             const embed = new Discord.MessageEmbed();

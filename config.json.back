@@ -5,7 +5,7 @@
     },
     "youtube": {
         "token":"PON EL TOKEN DE TU API DE Youtube",
-        "defaultsafesearch": 1
+        "defaultsafesearch": 0
     },
     "mysql": {
         "username": "USUARIO DE TU BASE DE DATOS MYSQL",

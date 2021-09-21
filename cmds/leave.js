@@ -35,8 +35,7 @@ module.exports = {
             await messageDelete(msg, message.author.id);
             return;
         }
-        Music.endConnection();
-        Music.endPlayer();
+        Music.end();
         const embed = new Discord.MessageEmbed();
         embed.setDescription(`adios !`);
         embed.setTimestamp();

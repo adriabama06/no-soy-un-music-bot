@@ -4,14 +4,12 @@
  */
 const Discord = require('discord.js');
 const DiscordAudio = require('@discordjs/voice');
-const ytdl = require('ytdl-core');
-const { EventEmitter } = require('events');
+const ytdl = require('ytdl-core-discord');
 const path = require('path');
 const { messageDelete } = require('./util.js');
 
-class ServerManager extends EventEmitter {
+class ServerManager {
     constructor() {
-        super();
         /**
          * @type {ytdl.videoInfo[]}
          */
@@ -81,6 +79,9 @@ class ServerManager extends EventEmitter {
         if(this.isconnection === false) {
             return;
         }
+        this.dispatcher.player.stop();
+        this.dispatcher = undefined;
+        this.isdispatcher = false;
         this.connection.destroy();
         this.connection = undefined;
         this.isconnection = false;
@@ -111,17 +112,11 @@ class ServerManager extends EventEmitter {
         this.isaudioresoruce = false;
         return;
     }
-    play() {
-        if(this.isaudioresoruce === true && this.audioresource.audioPlayer) {
-            this.audioresource.audioPlayer.stop();
-            this.audioresource = undefined;
-            this.isaudioresoruce = false;
-        }
-
+    async play() {
         if(this.audioplayer === undefined) {
             this.createPlayer();
         }
-        this.audioresource = DiscordAudio.createAudioResource(ytdl(this.songs[0].videoDetails.video_url));
+        this.audioresource = DiscordAudio.createAudioResource(await ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 50 }), { inputType: DiscordAudio.StreamType.Opus});
         this.isaudioresoruce = true;
         this.audioplayer.play(this.audioresource);
         this.isaudioplayer = true;
@@ -129,12 +124,9 @@ class ServerManager extends EventEmitter {
             this.dispatcher = this.connection.subscribe(this.audioplayer);
             this.isdispatcher = true;
         }
-        this.audioplayer.once(DiscordAudio.AudioPlayerStatus.Idle, async (oldState, newState) => {
-            if(!this.songs[0]) {
-                this.songs = [];
-                this.end();
-                return;
-            }
+        //this.audioresource.
+        //this.audioresource.playStream.on('end')
+        this.audioresource.playStream.once('end', async (oldState, newState) => {
             if(!this.songs[1]) {
                 if(this.ischannel) {
                     const embed = new Discord.MessageEmbed();
@@ -145,8 +137,11 @@ class ServerManager extends EventEmitter {
                     const msg = await this.channel.send({
                         embeds: [embed]
                     });
-                    await messageDelete(msg, undefined, 15000);
+                    messageDelete(msg, undefined, 15000);
                 }
+                this.end();
+                this.songs = [];
+                return;
             }
             const embed = new Discord.MessageEmbed();
             embed.setDescription(`Acaba de sonar:
