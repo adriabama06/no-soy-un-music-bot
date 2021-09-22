@@ -1,5 +1,4 @@
 # Ignore CONFIG.JSON duranting dev
-testaudio.mp3
 config.json
 
 # Logs

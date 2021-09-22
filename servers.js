@@ -124,8 +124,6 @@ class ServerManager {
             this.dispatcher = this.connection.subscribe(this.audioplayer);
             this.isdispatcher = true;
         }
-        //this.audioresource.
-        //this.audioresource.playStream.on('end')
         this.audioresource.playStream.once('end', async (oldState, newState) => {
             if(!this.songs[1]) {
                 if(this.ischannel) {
