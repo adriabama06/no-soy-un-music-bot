@@ -113,6 +113,7 @@ class ServerManager {
         return;
     }
     async play() {
+        if(!this.songs[0]) return;
         if(this.audioplayer === undefined) {
             this.createPlayer();
         }
