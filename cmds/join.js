@@ -5,8 +5,9 @@ const { messageDelete } = require('../util.js');
 
 module.exports = {
     name: "join",
-    description: "Haz que el bot se una a tu chat de voz, no es nececario ejecutar este comando siempre, un simple play ya se encarga de todo",
+    description: "Haz que el bot se una a tu chat de voz",
     example: "{prefix}join",
+    args: [],
     alias: ["j", "unete"],
     /**
      * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator, server, servers: Map<string, ServerManager>}} param0
@@ -21,7 +22,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.author.id);
+            await messageDelete(msg, message.member.id);
             return;
         }
         if(Music.isconnection === true) {
@@ -32,7 +33,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.author.id);
+            await messageDelete(msg, message.member.id);
             return;
         }
         Music.createConnection(message.member.voice.channel);
@@ -43,7 +44,7 @@ module.exports = {
         const msg = await message.channel.send({
             embeds: [embed]
         });
-        await messageDelete(msg, message.author.id);
+        await messageDelete(msg, message.member.id);
         return;
     }
 }

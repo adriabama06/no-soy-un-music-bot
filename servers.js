@@ -107,7 +107,7 @@ class ServerManager {
         if(this.isaudioresoruce === false) {
             return;
         }
-        this.audioresource.audioPlayer.stop();
+        this.audioresource.audioPlayer?.stop();
         this.audioresource = undefined;
         this.isaudioresoruce = false;
         return;
@@ -125,6 +125,9 @@ class ServerManager {
             this.isdispatcher = true;
         }
         this.audioresource.playStream.once('end', async (oldState, newState) => {
+            if(!this.songs[0]) {
+                return;
+            }
             if(!this.songs[1]) {
                 if(this.ischannel) {
                     const embed = new Discord.MessageEmbed();
@@ -139,6 +142,8 @@ class ServerManager {
                 }
                 this.end();
                 this.songs = [];
+                this.channel = undefined;
+                this.ischannel = false;
                 return;
             }
             const embed = new Discord.MessageEmbed();
@@ -177,6 +182,7 @@ class ServerManager {
      */
     setLogChannel(channel) {
         this.channel = channel;
+        this.ischannel = true;
         return;
     }
 }

@@ -7,8 +7,9 @@ const search = require('../search.js');
 
 module.exports = {
     name: "play",
-    description: "Utiliza este comando tanto como para iniciar una queue creada como para empezar una nueva, ahorra tiempo evitando que usar {prefix}join ya que este lo hara automaticamente ademas de que tambien puedes usarlo para añadir canciones a la queue",
+    description: "Inicia la musica o añade canciones a la queue",
     example: "{prefix}play {titulo / url}",
+    args: [{name: "video", type: 'STRING', required: false, description: "pon el url o el titulo del video"}],
     alias: ["p", "inicia", "start"],
     /**
      * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator, server, servers: Map<string, ServerManager>}} param0
@@ -23,7 +24,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.author.id, 15000);
+            await messageDelete(msg, message.member.id, 15000);
             return;
         }
         if(args[0]) {
@@ -32,7 +33,7 @@ module.exports = {
                 video = await ytdl.getInfo(args[0]);
             }
             if(video === undefined) {
-                const r = await search(args[0], server.safesearch.safesearch);
+                const r = await search(args.join(" "), server.safesearch.safesearch);
                 if(typeof r === 'string') {
                     video = await ytdl.getInfo(r);
                 }
@@ -45,7 +46,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                messageDelete(msg, message.author.id, 15000);
+                messageDelete(msg, message.member.id, 15000);
             } else {
                 Music.songs.push(video);
                 const embed = new Discord.MessageEmbed();
@@ -55,7 +56,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                messageDelete(msg, message.author.id, 15000);
+                messageDelete(msg, message.member.id, 15000);
             }
         }
         if(Music.isconnection === false || Music.connection === undefined) {

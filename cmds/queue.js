@@ -9,6 +9,7 @@ module.exports = {
     name: "queue",
     description: "Añade o visualiza la queue para ver las canciones que hay",
     example: "{prefix}queue (opcional){titulo / url}",
+    args: [{name: "video", type: 'STRING', required: false, description: "pon el url o el titulo del video"}],
     alias: ["q", "lista", "songs", "canciones"],
     /**
      * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator, server, servers: Map<string, ServerManager>}} param0
@@ -23,7 +24,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.author.id);
+            await messageDelete(msg, message.member.id);
             return;
         }
         if(args[0]) {
@@ -32,7 +33,7 @@ module.exports = {
                 video = await ytdl.getInfo(args[0]);
             }
             if(video === undefined) {
-                const r = await search(args[0], server.safesearch.safesearch);
+                const r = await search(args.join(" "), server.safesearch.safesearch);
                 if(typeof r === 'string') {
                     video = await ytdl.getInfo(r);
                 }
@@ -45,7 +46,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                messageDelete(msg, message.author.id, 15000);
+                messageDelete(msg, message.member.id, 15000);
             } else {
                 Music.songs.push(video);
                 const embed = new Discord.MessageEmbed();
@@ -55,7 +56,7 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                messageDelete(msg, message.author.id, 15000);
+                messageDelete(msg, message.member.id, 15000);
             }
             return;
         }
@@ -107,7 +108,7 @@ module.exports = {
                 .setEmoji('❌')
                 .setStyle('SECONDARY'));
             await msg.edit({ components: [row] });
-            const filter = (i) => (i.customId === 'back' || i.customId === 'next' || i.customId === 'exit') && (i.user.id === message.author.id);
+            const filter = (i) => (i.customId === 'back' || i.customId === 'next' || i.customId === 'exit') && (i.user.id === message.member.id);
             var index = 0;
             const collector = msg.createMessageComponentCollector({filter, time: 4 * 1000 * 60 });
             collector.on('collect', async (i) => {
@@ -154,7 +155,7 @@ module.exports = {
                 await msg.delete();
             });
         } else {
-            await messageDelete(msg, message.author.id, 4 * 1000 * 60);
+            await messageDelete(msg, message.member.id, 4 * 1000 * 60);
         }
         return;
     }

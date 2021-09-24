@@ -4,8 +4,9 @@ const { messageDelete } = require('../util.js');
 
 module.exports = {
     name: "setlogchannel",
-    description: "HOLA ESTE ES UN COMANDO DE PRUEBA",
+    description: "cambia el canal donde se veran los cambios de cancion etc",
     example: "{prefix}setlogchannel",
+    args: [],
     alias: ["channel", "setlog", "log"],
     /**
      * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator, server, servers: Map<string, ServerManager>}} param0
@@ -20,7 +21,7 @@ module.exports = {
         const msg = await message.channel.send({
             embeds: [embed]
         });
-        await messageDelete(msg, message.author.id, 15000);
+        await messageDelete(msg, message.member.id, 15000);
         return;
     }
 }

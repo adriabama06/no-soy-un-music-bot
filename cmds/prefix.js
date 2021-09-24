@@ -6,6 +6,7 @@ module.exports = {
     name: "prefix",
     description: "Cambia el prefix de tu servidor",
     example: "{prefix}prefix set {nuevo prefix}",
+    args: [{name: "option", type: 'STRING', required: false, choices: [{name: 'set', value: 'set'}, {name: 'reset', value: 'reset'}], description: "set or reset options"}, {name: "prefix", type: 'STRING', required: false, description: "set prefix for option set"}],
     alias: ["prefijo"],
     /**
      * @param {{client: Discord.Client, message: Discord.Message, args: string[], prefix: string, commands: Map<string, {name: string, description: string, alias: string[], run: () => void}>, alias: Map<string, {name: string, description: string, alias: string[], run: () => void}>, Mysql: MysqlIntermediator, server}} param0 
@@ -25,7 +26,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.author.id);
+            await messageDelete(msg, message.member.id);
             return;
         }
 
@@ -44,11 +45,11 @@ module.exports = {
                 const msg = await message.channel.send({
                     embeds: [embed]
                 });
-                await messageDelete(msg, message.author.id);
+                await messageDelete(msg, message.member.id);
                 return;
             }
 
-            await Mysql.setPrefix(message.guild.id, args[1], message.author.id);
+            await Mysql.setPrefix(message.guild.id, args[1], message.member.id);
 
             const embed = new Discord.MessageEmbed();
             embed.setTitle("Prefix cambiado");
@@ -58,11 +59,11 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.author.id);
+            await messageDelete(msg, message.member.id);
             return;
         }
         if(args[0].toLowerCase() === 'reset') {
-            await Mysql.setPrefix(message.guild.id, config.discord.defaultprefix, message.author.id);
+            await Mysql.setPrefix(message.guild.id, config.discord.defaultprefix, message.member.id);
 
             const embed = new Discord.MessageEmbed();
             embed.setTitle("Prefix reiniciado");
@@ -72,7 +73,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.author.id);
+            await messageDelete(msg, message.member.id);
             return;
         }
         return;
