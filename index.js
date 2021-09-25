@@ -58,7 +58,7 @@ client.on('messageCreate', async (message) => {
     const args = message.content.slice(prefix.length).trim().split(/ +/g);
     const cmd = args.shift().toLowerCase();
 
-    console.log(`${message.author.username}#${message.author.discriminator} (${message.author.id}) : ${message.content}`);
+    console.log(`Message - ${message.author.username}#${message.author.discriminator} (${message.author.id}) : ${message.content}`);
 
     if(cmd == 'setup') {
         /**
@@ -199,6 +199,7 @@ client.on('interactionCreate', async (interaction) => {
             args.push(data.value);
         }
     }
+    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.id}) : ${interaction.commandName} + ${args.join(" ")}`);
     if(commands.has(cmd)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
         var did = false;

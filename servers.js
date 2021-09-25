@@ -4,7 +4,7 @@
  */
 const Discord = require('discord.js');
 const DiscordAudio = require('@discordjs/voice');
-const ytdl = require('ytdl-core-discord');
+const ytdl = require('ytdl-core');
 const path = require('path');
 const { messageDelete } = require('./util.js');
 
@@ -116,7 +116,7 @@ class ServerManager {
         if(this.audioplayer === undefined) {
             this.createPlayer();
         }
-        this.audioresource = DiscordAudio.createAudioResource(await ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 50 }), { inputType: DiscordAudio.StreamType.Opus });
+        this.audioresource = DiscordAudio.createAudioResource(ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'highestaudio' }), { inputType: DiscordAudio.StreamType.WebmOpus });
         this.isaudioresoruce = true;
         this.audioplayer.play(this.audioresource);
         this.isaudioplayer = true;
