@@ -199,31 +199,35 @@ client.on('interactionCreate', async (interaction) => {
             args.push(data.value);
         }
     }
-    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.id}) : ${interaction.commandName} + ${args.join(" ")}`);
+    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.id}) : /${interaction.commandName} ${args.join(" ")}`);
     if(commands.has(cmd)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
         var did = false;
         setTimeout(async () => {
-            if(interaction.replied === true && did == false) {
+            if(interaction.replied === true && did == false && interaction.webhook) {
                 await interaction.deleteReply();
             }
         }, 5000);
         await commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
         did = true;
-        await interaction.deleteReply();
+        if(interaction.replied === true && interaction.webhook) {
+            await interaction.deleteReply();
+        }
         return;
     }
     if(alias.has(cmd)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
         var did = false;
         setTimeout(async () => {
-            if(interaction.replied === true && did == false) {
+            if(interaction.replied === true && did == false && interaction.webhook) {
                 await interaction.deleteReply();
             }
         }, 5000);
         await alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
         did = true;
-        await interaction.deleteReply();
+        if(interaction.replied === true && interaction.webhook) {
+            await interaction.deleteReply();
+        }
         return;
     }
 });

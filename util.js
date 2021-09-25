@@ -65,7 +65,9 @@ const messageDelete = async (message, userid, timeout = 240000) => {
         });
         
         collector.on('end', async (collected, reason) => {
-            await message.delete();
+            if(message.deleted == false && message.deletable == true && typeof message.delete == 'function') {
+                await message.delete();
+            }
             if(reason && reason === 'user') {
                 resolve(true);
             } else {
