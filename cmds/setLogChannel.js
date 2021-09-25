@@ -21,7 +21,7 @@ module.exports = {
         const msg = await message.channel.send({
             embeds: [embed]
         });
-        await messageDelete(msg, message.member.id, 15000);
+        messageDelete(msg, message.member.id, 15000);
         return;
     }
 }

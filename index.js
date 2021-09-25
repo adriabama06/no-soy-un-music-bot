@@ -201,12 +201,28 @@ client.on('interactionCreate', async (interaction) => {
     }
     if(commands.has(cmd)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
+        var did = false;
+        setTimeout(async () => {
+            if(interaction.replied === true && did == false) {
+                await interaction.deleteReply();
+            }
+        }, 5000);
         await commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
+        did = true;
+        await interaction.deleteReply();
         return;
     }
     if(alias.has(cmd)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
+        var did = false;
+        setTimeout(async () => {
+            if(interaction.replied === true && did == false) {
+                await interaction.deleteReply();
+            }
+        }, 5000);
         await alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
+        did = true;
+        await interaction.deleteReply();
         return;
     }
 });

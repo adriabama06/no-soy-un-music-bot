@@ -12,7 +12,7 @@ Por ahora mientras programo el bot tengo un archivo en el que tengo mi configura
 
 - [x] crear cliente para conectar la base de datos [MariaDB](https://mariadb.org/) con el bot
 - [x] preparar todo sobre los prefix y conecciones con la base de datos
-- [ ] poner comandos de musica: `play - stop - queue - pause - resume - safesearch`
+- [x] poner comandos de musica: `play - stop - queue - pause - resume - safesearch`
 - [ ] guardar informacion de cuando el bot ha sido invitado y guardar queues
 - [ ] ya ire añadiendo objetivos
 - [ ] tener el bot listo y dejarlo listo para que todos lo puedan usar
@@ -22,3 +22,4 @@ Por ahora mientras programo el bot tengo un archivo en el que tengo mi configura
 - [discord.js](https://github.com/discordjs/discord.js) - Para el bot de discord
 - [mysql](https://github.com/mysqljs/mysql) - Para el acceso a una Base de Datos [MariaDB](https://mariadb.org/)
 - [ytdl-core](https://github.com/fent/node-ytdl-core) - Para obtener la informacion de forma rapida de un video de [YouTube](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
+- [ytdl-core-discord](https://github.com/amishshah/ytdl-core-discord) - Para tener la entrada de video en opus para evitar usar ffmpeg para que vaya más rapido

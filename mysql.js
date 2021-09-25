@@ -94,9 +94,9 @@ class MysqlIntermediator {
      */
     async setSafeSearch(id, safesearch, user = '%false%') {
         const server = this.servers.get(id);
-        server.safesearch.safesearch = safesearch;
+        server.safesearch.safesearch = safesearch.toString();
         server.queues.user = user;
-        await this.query(`UPDATE ${config.mysql.tables.safesearch} SET \`safesearch\`= '${safesearch}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
+        await this.query(`UPDATE ${config.mysql.tables.safesearch} SET \`safesearch\`= '${safesearch.toString()}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
         return server;
     }
 

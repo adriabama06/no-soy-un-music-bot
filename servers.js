@@ -40,7 +40,6 @@ class ServerManager {
         this.channel;
         this.ischannel = false;
     }
-
     /**
      * @param {Discord.VoiceChannel} channel
      * @return {DiscordAudio.VoiceConnection}
@@ -117,7 +116,7 @@ class ServerManager {
         if(this.audioplayer === undefined) {
             this.createPlayer();
         }
-        this.audioresource = DiscordAudio.createAudioResource(await ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 50 }), { inputType: DiscordAudio.StreamType.Opus});
+        this.audioresource = DiscordAudio.createAudioResource(await ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'highestaudio', highWaterMark: 50 }), { inputType: DiscordAudio.StreamType.Opus });
         this.isaudioresoruce = true;
         this.audioplayer.play(this.audioresource);
         this.isaudioplayer = true;
