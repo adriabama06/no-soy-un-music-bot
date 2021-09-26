@@ -78,12 +78,16 @@ class ServerManager {
         if(this.isconnection === false) {
             return;
         }
-        this.dispatcher.player.stop();
-        this.dispatcher = undefined;
-        this.isdispatcher = false;
-        this.connection.destroy();
-        this.connection = undefined;
-        this.isconnection = false;
+        if(this.isdispatcher === true && this.dispatcher != undefined) {
+            this.dispatcher.player.stop();
+            this.dispatcher = undefined;
+            this.isdispatcher = false;
+        }
+        if(this.isconnection === true && this.connection != undefined) {
+            this.connection.destroy();
+            this.connection = undefined;
+            this.isconnection = false;
+        }
         return;
     }
     createPlayer() {

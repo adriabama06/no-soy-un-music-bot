@@ -205,13 +205,17 @@ client.on('interactionCreate', async (interaction) => {
         var did = false;
         setTimeout(async () => {
             if(interaction.replied === true && did == false && interaction.webhook) {
-                await interaction.deleteReply();
+                try {
+                    await interaction.deleteReply();
+                } catch (err) { }
             }
         }, 5000);
         await commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
         did = true;
         if(interaction.replied === true && interaction.webhook) {
-            await interaction.deleteReply();
+            try {
+                await interaction.deleteReply();
+            } catch (err) { }
         }
         return;
     }
@@ -220,13 +224,17 @@ client.on('interactionCreate', async (interaction) => {
         var did = false;
         setTimeout(async () => {
             if(interaction.replied === true && did == false && interaction.webhook) {
-                await interaction.deleteReply();
+                try {
+                    await interaction.deleteReply();
+                } catch (err) { }
             }
         }, 5000);
         await alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
         did = true;
         if(interaction.replied === true && interaction.webhook) {
-            await interaction.deleteReply();
+            try {
+                await interaction.deleteReply();
+            } catch (err) { }
         }
         return;
     }
