@@ -13,7 +13,7 @@ Por ahora mientras programo el bot tengo un archivo en el que tengo mi configura
 - [x] crear cliente para conectar la base de datos [MariaDB](https://mariadb.org/) con el bot
 - [x] preparar todo sobre los prefix y conecciones con la base de datos
 - [x] poner comandos de musica: `play - stop - queue - pause - resume - safesearch`
-- [ ] guardar informacion de cuando el bot ha sido invitado y guardar queues
+- [x] guardar informacion de cuando el bot ha sido invitado y guardar queues
 - [ ] ya ire añadiendo objetivos
 - [ ] tener el bot listo y dejarlo listo para que todos lo puedan usar
 
