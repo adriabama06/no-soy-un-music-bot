@@ -6,7 +6,7 @@ npm i --save
 ```
 
 ## Durante el desarollo!
-Por ahora mientras programo el bot tengo un archivo en el que tengo mi configuracion, ese no se sube porque le he puesto `config.json.dev` y en [.gitignore](https://github.com/adriabama06/no-soy-un-music-bot/blob/028b87ced7c086ee2b76339783512c87b4e57f09/.gitignore) he añadido que no se suba y sea ignorado, el de ejemplo es el [config.json.back](https://github.com/adriabama06/no-soy-un-music-bot/blob/b9a8369cfc61b3e8e04fbd93a60c01bd5f737c4a/config.json.back)
+Por ahora mientras programo el bot tengo un archivo en el que tengo mi configuracion, ese no se sube porque le he puesto `config.json` y en [.gitignore](https://github.com/adriabama06/no-soy-un-music-bot/blob/028b87ced7c086ee2b76339783512c87b4e57f09/.gitignore) he añadido que no se suba y sea ignorado, el de ejemplo es el [config.json.back](https://github.com/adriabama06/no-soy-un-music-bot/blob/b9a8369cfc61b3e8e04fbd93a60c01bd5f737c4a/config.json.back)
 
 ## Objetivos:
 

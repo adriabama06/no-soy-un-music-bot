@@ -24,7 +24,7 @@ module.exports = {
             const msg = await message.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, message.member.id);
+            messageDelete(msg, message.member.id);
             return;
         }
         if(args[0]) {
@@ -155,7 +155,7 @@ module.exports = {
                 await msg.delete();
             });
         } else {
-            await messageDelete(msg, message.member.id, 4 * 1000 * 60);
+            messageDelete(msg, message.member.id, 4 * 1000 * 60);
         }
         return;
     }

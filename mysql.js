@@ -107,17 +107,17 @@ class MysqlIntermediator {
      * @param {string} user
      */
     async setQueue(id, queue, user = '%false%') {
-        const server = this.servers.get(id);
+        var server = this.servers.get(id);
         server.queues.queue = queue;
         server.queues.user = user;
         await this.query(`UPDATE ${config.mysql.tables.queues} SET \`queue\` = '${JSON.stringify(queue)}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
+        this.parsequeue(id);
         return server;
     }
 
     /**
      * @param {string} id
      * @param {string} user 
-     * Please give and string array **only** with VideoId https://youtube.com/watch?v=**VIDEOID**
      */
     async setInfo(id, user) {
         const server = this.servers.get(id);
@@ -236,7 +236,7 @@ class MysqlIntermediator {
      */
     async parsequeue(id) {
         var server = this.servers.get(id);
-        if(typeof server.queues.queue === 'string' && !typeof server.queues.queue.length <= 0) {
+        if(typeof server.queues.queue === 'string' && server.queues.queue.length > 0) {
             var temptransform = JSON.parse(server.queues.queue);
             var queue = [];
             for(const song of temptransform) {

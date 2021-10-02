@@ -39,6 +39,13 @@ class ServerManager {
          */
         this.channel;
         this.ischannel = false;
+        /**
+         * @type {{volume: number, loop: boolean}}
+         */
+        this.options = {
+            volume: 100,
+            loop: false,
+        }
     }
     /**
      * @param {Discord.VoiceChannel} channel
@@ -187,7 +194,20 @@ class ServerManager {
     setLogChannel(channel) {
         this.channel = channel;
         this.ischannel = true;
-        return;
+        return true;
+    }
+    /**
+     * Idk now not work
+     * Someone can help me about volume?
+     * @param {number} volume send 0% to 100%
+     */
+    setVolume(volume) {
+        if(this.isaudioplayer === false || this.audioplayer === undefined) {
+            return false;
+        }
+        this.audioplayer.state.resource.volume?.setVolume(volume / 100);
+        this.options.volume = volume;
+        return true;
     }
 }
 

@@ -33,6 +33,9 @@ client.on('ready', async () => {
     console.log(`Bot listo como ${client.user.username}#${client.user.discriminator} (${client.user.id})`);
 });
 
+/**
+ * @see https://support-dev.discord.com/hc/en-us/articles/4404772028055-Message-Content-Access-Deprecation-for-Verified-Bots
+ */
 client.on('messageCreate', async (message) => {
     if(
     !message.guild
