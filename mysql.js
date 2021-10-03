@@ -263,7 +263,7 @@ class MysqlIntermediator {
                     resolve("error");
                 }
                 if(!results || results.length === 0) {
-                    console.log("mysql no encontro ningun servidor");
+                    console.log("mysql no encontro ningun servidor en la base de datos, prueba de invitar al bot a algun servidor o ejecutar algun comando");
                     resolve("no-servers");
                 }
                 resolve(results);
