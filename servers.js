@@ -5,7 +5,6 @@
 const Discord = require('discord.js');
 const DiscordAudio = require('@discordjs/voice');
 const ytdl = require('ytdl-core');
-const path = require('path');
 const { messageDelete } = require('./util.js');
 
 class ServerManager {
@@ -40,11 +39,12 @@ class ServerManager {
         this.channel;
         this.ischannel = false;
         /**
-         * @type {{volume: number, loop: boolean}}
+         * @type {{volume: number, loop: boolean, skip: boolean}}
          */
         this.options = {
             volume: 100,
             loop: false,
+            skip: false,
         }
     }
     /**
@@ -140,7 +140,7 @@ class ServerManager {
                 return;
             }
             if(!this.songs[1]) {
-                if(this.ischannel) {
+                if(this.ischannel && this.options.loop === false) {
                     const embed = new Discord.MessageEmbed();
                     embed.setDescription(`Acaba de sonar la ultima cancion:
                     [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
@@ -150,26 +150,32 @@ class ServerManager {
                         embeds: [embed]
                     });
                     messageDelete(msg, undefined, 15000);
+                    this.end();
+                    this.songs = [];
+                    this.channel = undefined;
+                    this.ischannel = false;
+                    return;
                 }
-                this.end();
-                this.songs = [];
-                this.channel = undefined;
-                this.ischannel = false;
-                return;
             }
             const embed = new Discord.MessageEmbed();
-            embed.setDescription(`Acaba de sonar:
-            [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})
-            
-            La siguiente es:
-            [${this.songs[1].videoDetails.title}](${this.songs[1].videoDetails.video_url})`);
+            if(this.options.loop === true && this.options.skip === false) {
+                embed.setDescription(`Modo repeticion activado! Volvera a sonar:
+                [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
+            } else {
+                embed.setDescription(`${this.options.skip === true ? "Skip! - " : ""}Acaba de sonar:
+                [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})
+                
+                La siguiente es:
+                [${this.songs[1].videoDetails.title}](${this.songs[1].videoDetails.video_url})`);
+                this.options.skip = false;
+                this.songs.shift();
+            }
             embed.setTimestamp();
             embed.setColor("RANDOM");
             const msg = await this.channel.send({
                 embeds: [embed]
             });
             messageDelete(msg, undefined, 15000);
-            this.songs.shift();
             this.play();
         });
         return;
