@@ -1,5 +1,5 @@
-# Ignore CONFIG.JSON duranting dev
-config.json
+# Ignore CONFIG.JSON.BACK duranting dev
+config.json.back
 
 # Logs
 logs
