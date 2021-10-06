@@ -77,7 +77,16 @@ const messageDelete = async (message, userid, timeout = 240000) => {
     });
 }
 
+/**
+ * @param {number} time
+ * @returns {string}
+ */
+ function MilisecondsToTime(time) {
+    return new Date(time).toISOString().substr(11, 8);
+}
+
 module.exports = {
     waitReaction,
     messageDelete,
+    MilisecondsToTime
 }
