@@ -1,5 +1,6 @@
 # Ignore CONFIG.JSON.dev duranting dev
 config.json.dev
+src/config.json
 
 # Logs
 logs
