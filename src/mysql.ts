@@ -22,6 +22,8 @@ export class MysqlIntermediator {
         this.MysqlConfig = MysqlConfig;
         this.ClientConfig = ClientConfig;
         
+        this.MysqlSync();
+
         this.CheckInterval = setInterval(() => {
             if(ClientConfig.CallBack != undefined) {
                 ClientConfig.CallBack(this);
@@ -41,6 +43,80 @@ export class MysqlIntermediator {
     }
     public has(id: string): boolean {
         return this.servers.has(id);
+    }
+
+    async setPrefix(id: string, prefix: string, user: string = '%false%'): Promise<MysqlServerInterface | false> {
+        var server = this.get(id);
+        if(!server) {
+            return false;
+        }
+        server.prefix.prefix = prefix;
+        server.prefix.user = user;
+        await this.query(`UPDATE ${config.mysql.tables.prefix} SET \`prefix\`= '${prefix}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
+        return server;
+    }
+
+    async setSafeSearch(id: string, safesearch: string, user: string = '%false%'): Promise<MysqlServerInterface | false> {
+        var server = this.get(id);
+        if(!server) {
+            return false;
+        }
+        server.safesearch.safesearch = safesearch;
+        server.queues.user = user;
+        await this.query(`UPDATE ${config.mysql.tables.safesearch} SET \`safesearch\`= '${safesearch}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
+        return server;
+    }
+
+    /**
+     * @param {string[]} queue 
+     * Please give and string array **only** with VideoId : youtube.com/watch?v=**VIDEOID**
+     */
+    async setQueue(id: string, queue: string[], user: string = '%false%'): Promise<MysqlServerInterface | false> {
+        var server = this.get(id);
+        if(!server) {
+            return false;
+        }
+        server.queues.queue = JSON.stringify(queue);
+        server.queues.user = user;
+        await this.query(`UPDATE ${config.mysql.tables.queues} SET \`queue\` = '${JSON.stringify(queue)}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
+        this.ParseQueue(id);
+        return server;
+    }
+
+    async setInfo(id: string, user: string): Promise<MysqlServerInterface | false> {
+        var server = this.get(id);
+        if(!server) {
+            return false;
+        }
+        server.info.user = user;
+        await this.query(`UPDATE ${config.mysql.tables.info} SET \`user\` = '${user}' WHERE \`id\` = '${id}'`);
+        return server;
+    }
+    public async add(id: string, user: string = '%false%'): Promise<boolean> {
+        if(this.has(id)) {
+            return false;
+        }
+        var sqls: string[] = [
+            `INSERT INTO ${config.mysql.tables.prefix} (\`id\`, \`prefix\`, \`user\`) VALUES ('${id}', '${config.discord.defaultprefix}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.safesearch} (\`id\`, \`safesearch\`, \`user\`) VALUES ('${id}', '${config.youtube.defaultsafesearch}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.info} (\`id\`, \`user\`) VALUES ('${id}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.queues} (\`id\`, \`queue\`, \`user\`) VALUES ('${id}', '${JSON.stringify([])}', '${user}');`
+        ];
+        var results = [];
+        for(const sql of sqls) {
+            const result = await this.query(sql);
+            results.push(result);
+        }
+        if(results.includes('error')) {
+            return false;
+        }
+        this.servers.set(id, {
+            prefix: { id: id, prefix: config.discord.defaultprefix, user: user },
+            safesearch: { id: id, safesearch: config.youtube.defaultsafesearch, user: user },
+            queues: { id: id, queue: [], user: user },
+            info: { id: id, user: user }
+        });
+        return true;
     }
     public async remove(id: string): Promise<boolean> {
         if(!this.servers.has(id)) {

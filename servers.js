@@ -208,10 +208,11 @@ class ServerManager {
      * @param {number} volume send 0% to 100%
      */
     setVolume(volume) {
-        if(this.isaudioplayer === false || this.audioplayer === undefined) {
+        if(this.isaudioresoruce === false || this.audioresource === undefined) {
             return false;
         }
-        this.audioplayer.state.resource.volume?.setVolume(volume / 100);
+        this.audioresource.volume?.setVolume(volume / 100);
+        //this.audioplayer.state.resource.volume?.setVolume(volume / 100);
         this.options.volume = volume;
         return true;
     }
