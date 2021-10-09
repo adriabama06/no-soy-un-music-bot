@@ -22,7 +22,7 @@ Es importante crear la base de datos, tienes en ./setup un .sql para phpmyadmin 
 - [x] Preparar todo sobre los prefix y conecciones con la base de datos
 - [x] Poner comandos de musica: `play - stop - queue - pause - resume - safesearch`
 - [x] Guardar informacion de cuando el bot ha sido invitado y guardar queues
-- [x] Crear una DashBoard
+- [ ] Crear una DashBoard
 - [ ] Podeis añadir cosas que me haya dejado o cosas que puedo añadir en https://github.com/adriabama06/no-soy-un-music-bot/issues/new
 - [ ] Ya ire añadiendo objetivos
 - [ ] Tener el bot listo y dejarlo listo para que todos lo puedan usar
