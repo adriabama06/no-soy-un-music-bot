@@ -1,7 +1,9 @@
-import { ApplicationCommandOptionData, Client, Interaction } from 'discord.js';
+import { ApplicationCommandOptionData, Client, Interaction, TextBasedChannels } from 'discord.js';
+import { AudioPlayer, AudioResource, PlayerSubscription, VoiceConnection } from '@discordjs/voice';
 import { videoInfo } from 'ytdl-core';
 
 import { MysqlIntermediator } from './mysql';
+import { ServerManager } from './servers';
 
 export interface MysqlServerInterface {
     prefix: {id: string, prefix: string, user: string},
@@ -12,30 +14,46 @@ export interface MysqlServerInterface {
 
 export interface ClientConfigInterface {
     SyncInterval: number,
-    CallBack?: (MysqlIntermediator: MysqlIntermediator) => void,
+    IntervalCallBack?: (MysqlIntermediator: MysqlIntermediator) => void,
     override?: boolean
+}
+
+export interface ServerManagerOptionsInterface {
+    volume: number,
+    loop: boolean,
+    skip: boolean
+}
+
+export interface ServerManagerInterface {
+    songs: videoInfo[],
+    dispatcher: PlayerSubscription | undefined,
+    connection: VoiceConnection | undefined,
+    audioplayer: AudioPlayer | undefined,
+    audioresource: AudioResource | undefined,
+    channel: TextBasedChannels | undefined,
+    options: ServerManagerOptionsInterface
 }
 
 export interface CommandRunInterface {
     client: Client,
     interaction: Interaction,
     Mysql: MysqlIntermediator,
-    Servers: any,
+    Servers: ServerManager,
     Commands: CommandInterface,
     Alias: CommandInterface
 }
 
 export interface CommandInterface {
-    name: string,
+    name: string | undefined,
     info: {
-        es: string,
-        en: string
-    }
+        es: string | undefined,
+        en: string | undefined
+    } | undefined,
     longinfo: {
-        es: string,
-        en: string
-    }
-    params: ApplicationCommandOptionData,
-    alias: string[],
-    run: (CommandRun: CommandRunInterface) => Promise<boolean>
+        es: string | undefined,
+        en: string | undefined
+    } | undefined,
+    params: ApplicationCommandOptionData | undefined,
+    alias: string[] | undefined,
+    run: (CommandRun: CommandRunInterface) => Promise<boolean> | undefined
 }

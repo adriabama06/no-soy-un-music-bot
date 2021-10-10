@@ -25,8 +25,8 @@ export class MysqlIntermediator {
         this.MysqlSync();
 
         this.CheckInterval = setInterval(() => {
-            if(ClientConfig.CallBack != undefined) {
-                ClientConfig.CallBack(this);
+            if(ClientConfig.IntervalCallBack != undefined) {
+                ClientConfig.IntervalCallBack(this);
                 if(ClientConfig.override) {
                     return;
                 }
