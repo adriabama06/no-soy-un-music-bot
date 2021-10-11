@@ -6,7 +6,7 @@
 import mysql from 'mysql';
 import ytdl from 'ytdl-core';
 
-import config from './config.json';
+import config from './config';
 import { MysqlServerInterface, ClientConfigInterface } from './interfaces';
 
 export class MysqlIntermediator {

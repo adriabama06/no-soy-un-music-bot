@@ -1,10 +1,10 @@
 {
   "name": "no-soy-un-music-bot",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Bot de musica que he creado con el codigo publico para que mas gente pueda descargarlo o pueda ver el codigo por si nececitan ayuda",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
-    "start": "node .",
+    "start": "tsc && node .",
     "install": "npm i --save && tsc",
     "build": "tsc"
   },

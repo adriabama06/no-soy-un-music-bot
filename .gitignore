@@ -1,6 +1,7 @@
 # Ignore CONFIG.JSON.dev duranting dev
 config.json.dev
-src/config.json
+src/config.ts
+lib/*
 
 # Logs
 logs

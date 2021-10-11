@@ -3,7 +3,7 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 
 import { CommandInterface } from './interfaces';
-import config from './config.json';
+import config from './config';
 import { loadCommands } from './commandHandler';
 import { ServerManager } from './servers';
 import { MysqlIntermediator } from './mysql';
@@ -38,17 +38,17 @@ client.on('ready', async () => {
             status: 'online'
         });
     }, 2 * 60 * 1000);
-    const rest = new REST({ version: '9' }).setToken(config.discord.token);
-    if(client.user) {
-        await rest.put(
-            Routes.applicationCommands(client.user?.id),
-            {
-                body: {
-                    
-                }
-            },
-        );
-    }
+    //const rest = new REST({ version: '9' }).setToken(config.discord.token);
+    //if(client.user) {
+    //    await rest.put(
+    //        Routes.applicationCommands(client.user?.id),
+    //        {
+    //            body: {
+    //                
+    //            }
+    //        },
+    //    );
+    //}
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
