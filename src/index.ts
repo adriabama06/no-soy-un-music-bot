@@ -1,5 +1,6 @@
 import { Client, Intents, Interaction } from 'discord.js';
-
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
 
 import { CommandInterface } from './interfaces';
 import config from './config.json';
@@ -19,6 +20,8 @@ var Mysql: MysqlIntermediator = new MysqlIntermediator({
     user: config.mysql.username,
     password: config.mysql.password,
     database: config.mysql.database
+}, {
+    SyncInterval: 5 * 1000 * 60
 });
 
 client.on('ready', async () => {
@@ -35,35 +38,44 @@ client.on('ready', async () => {
             status: 'online'
         });
     }, 2 * 60 * 1000);
+    const rest = new REST({ version: '9' }).setToken(config.discord.token);
+    if(client.user) {
+        await rest.put(
+            Routes.applicationCommands(client.user?.id),
+            {
+                body: {
+                    
+                }
+            },
+        );
+    }
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
-    if (!interaction.isCommand() || !interaction.guild?.id) {
+    if (!interaction.isCommand() || !interaction.guild?.id || !interaction.member) {
         return;
     }
     if(!Servers.has(interaction.guild?.id)) {
         Servers.set(interaction.guild.id, new ServerManager());
     }
     if(!Mysql.has(interaction.guild.id)) {
-        await Mysql.add(interaction.guild.id, interaction.member.id);
+        await Mysql.add(interaction.guild.id, interaction.member.user.id);
     }
 
-    const server = Mysql.get(interaction.guild.id);
+    var server = Mysql.get(interaction.guild.id);
+
+    if(!server) {
+        return;
+    }
 
     if(server.info.user === '%false%') {
-        await Mysql.setInfo(interaction.guild.id, interaction.member.id);
+        await Mysql.setInfo(interaction.guild.id, interaction.member.user.id);
     }
-    var prefix = server.prefix.prefix;
-    var cmd = interaction.commandName;
-    var args = [];
-    var message = interaction;
-    for(const data of interaction.options.data) {
-        if(data.value != undefined) {
-            args.push(data.value);
-        }
-    }
-    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.id}) : /${interaction.commandName} ${args.join(" ")}`);
-    if(commands.has(cmd)) {
+
+    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) : /${interaction.commandName} ${interaction.options.data.forEach(d => `${d.name} - ${d.value}`)}`);
+    
+    
+    if(Commands.has(interaction.commandName)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
         var did = false;
         setTimeout(async () => {
@@ -73,7 +85,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
                 } catch (err) { }
             }
         }, 5000);
-        await commands.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
+        await Commands.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers});
         did = true;
         if(interaction.replied === true && interaction.webhook) {
             try {
@@ -82,7 +94,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         }
         return;
     }
-    if(alias.has(cmd)) {
+    if(Alias.has(interaction.commandName)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
         var did = false;
         setTimeout(async () => {
@@ -92,7 +104,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
                 } catch (err) { }
             }
         }, 5000);
-        await alias.get(cmd).run({cmd, client, message, args, prefix, commands, alias, Mysql, config, server, servers});
+        await Alias.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers});
         did = true;
         if(interaction.replied === true && interaction.webhook) {
             try {

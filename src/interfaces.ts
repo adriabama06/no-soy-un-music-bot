@@ -1,4 +1,4 @@
-import { ApplicationCommandOptionData, Client, Interaction, TextBasedChannels } from 'discord.js';
+import { ApplicationCommandOptionData, Client, CommandInteraction, Interaction, TextBasedChannels } from 'discord.js';
 import { AudioPlayer, AudioResource, PlayerSubscription, VoiceConnection } from '@discordjs/voice';
 import { videoInfo } from 'ytdl-core';
 
@@ -36,11 +36,11 @@ export interface ServerManagerInterface {
 
 export interface CommandRunInterface {
     client: Client,
-    interaction: Interaction,
+    interaction: CommandInteraction,
     Mysql: MysqlIntermediator,
-    Servers: ServerManager,
-    Commands: CommandInterface,
-    Alias: CommandInterface
+    Servers: Map<string, ServerManager>,
+    Commands: Map<string, CommandInterface>,
+    Alias: Map<string, CommandInterface>
 }
 
 export interface CommandInterface {
@@ -53,7 +53,10 @@ export interface CommandInterface {
         es: string | undefined,
         en: string | undefined
     } | undefined,
-    params: ApplicationCommandOptionData | undefined,
+    params: {
+        es: ApplicationCommandOptionData[] | undefined,
+        en: ApplicationCommandOptionData[] | undefined
+    } | undefined,
     alias: string[] | undefined,
-    run: (CommandRun: CommandRunInterface) => Promise<boolean> | undefined
+    run: (CommandRun: CommandRunInterface) => Promise<boolean | void> | void
 }

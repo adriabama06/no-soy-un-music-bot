@@ -11,6 +11,10 @@ export function loadCommands(CommandsDirectory: string, Commands: Map<string, Co
     }
     for(const File of Files) {
         const command = require(join(__dirname, CommandsDirectory, File)) as CommandInterface;
+        if(!command.name) {
+            continue;
+        }
+        console.log(command.params?.es);
         Commands.set(command.name, command);
         if(command.alias && command.alias.length >= 1) {
             for(const AliasName of command.alias) {
