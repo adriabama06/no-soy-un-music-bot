@@ -13,24 +13,24 @@ const command: CommandInterface = {
     params: {
         es: [
             {
-                name: "video",
+                name: 'user',
                 type: 'USER',
                 required: false,
-                description: "a quien quieres probar"
-            },
+                description: 'a quien quieres probar'
+            }
         ],
         en: [
             {
-                name: "video",
+                name: 'user',
                 type: 'USER',
                 required: false,
-                description: "who we like test"
-            },
+                description: 'who we like test'
+            }
         ]
     },
     alias: ["exarg1", "exarg2"],
     run: async ({interaction}: CommandRunInterface): Promise<boolean | void> => {
-        interaction.reply({ content: `hola ${interaction.options.getString('video') ? interaction.options.getString('video') : interaction.member?.user.id}`});
+        interaction.channel?.send({ content: `hola ${interaction.options.getUser('user') ? interaction.options.getUser('user')?.avatarURL({ dynamic: true }) : ', no user set'}`});
         return true;
     }
 }

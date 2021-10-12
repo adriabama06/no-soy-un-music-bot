@@ -6,7 +6,8 @@
   "scripts": {
     "start": "tsc && node .",
     "install": "npm i --save && tsc",
-    "build": "tsc"
+    "build": "tsc",
+    "dev": "del lib\\* /Q /S /F && npm start"
   },
   "repository": {
     "type": "git",

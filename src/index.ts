@@ -1,12 +1,11 @@
-import { Client, Intents, Interaction } from 'discord.js';
-import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v9';
+import { ApplicationCommandData, ApplicationCommandOptionData, Client, Intents, Interaction } from 'discord.js';
 
 import { CommandInterface } from './interfaces';
 import config from './config';
 import { loadCommands } from './commandHandler';
 import { ServerManager } from './servers';
 import { MysqlIntermediator } from './mysql';
+import command from './cmds/examplecmd';
 
 
 const client: Client = new Client({
@@ -38,17 +37,25 @@ client.on('ready', async () => {
             status: 'online'
         });
     }, 2 * 60 * 1000);
-    //const rest = new REST({ version: '9' }).setToken(config.discord.token);
-    //if(client.user) {
-    //    await rest.put(
-    //        Routes.applicationCommands(client.user?.id),
-    //        {
-    //            body: {
-    //                
-    //            }
-    //        },
-    //    );
-    //}
+    if(client.user) {
+        client.application?.commands.set([{
+            name: 'setup',
+            type: 'CHAT_INPUT',
+            description: 'Set the language on this server',
+            options: [
+                {
+                    name: 'language',
+                    type: 'STRING',
+                    required: true,
+                    description: 'languages to set',
+                    choices: [
+                        {name: 'Carga los comandos en Español', value: 'es'},
+                        {name: 'load the commands in English', value: 'en'}
+                    ]
+                }
+            ]
+        }]);
+    }
 });
 
 client.on('interactionCreate', async (interaction: Interaction) => {
@@ -72,8 +79,88 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         await Mysql.setInfo(interaction.guild.id, interaction.member.user.id);
     }
 
-    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) : /${interaction.commandName} ${interaction.options.data.forEach(d => `${d.name} - ${d.value}`)}`);
+    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) : /${interaction.commandName}`);
+    for(const v of interaction.options.data) {
+        console.log(`${v.name}${v.value ? ` - ${v.value.toString()}` : ''}`);
+    }
+    console.log('\n');
     
+    if(interaction.commandName === 'setup') {
+        var languageSelected = interaction.options.getString('language');
+        if(!languageSelected) {
+            return;
+        }
+        await interaction.reply({ 
+            content: 'Loading commands...',
+            ephemeral: false
+        });
+        var toset: ApplicationCommandData[] = [];
+        for(const Command of Commands) {
+            var description: string = "Descripcion no puesta";
+            var opts: ApplicationCommandOptionData[] = [];
+            if(Command[1].params) {
+                if(languageSelected === 'es') {
+                    var params = Command[1].params.es;
+                    var des = Command[1].info?.es;
+                    if(params) {
+                        opts = params;
+                    }
+                    if(des) {
+                        description = des;
+                    }
+                }
+                if(languageSelected === 'en') {
+                    var params = Command[1].params.en;
+                    var des = Command[1].info?.en;
+                    if(params) {
+                        opts = params;
+                    }
+                    if(des) {
+                        description = des;
+                    }
+                }
+            }
+            toset.push({
+                name: Command[0],
+                description: description,
+                options: opts
+            });
+        }
+        for(const Command of Alias) {
+            var description: string = "Descripcion no puesta";
+            var opts: ApplicationCommandOptionData[] = [];
+            if(Command[1].params) {
+                if(languageSelected === 'es') {
+                    var params = Command[1].params.es;
+                    var des = Command[1].info?.es;
+                    if(params) {
+                        opts = params;
+                    }
+                    if(des) {
+                        description = des;
+                    }
+                }
+                if(languageSelected === 'en') {
+                    var params = Command[1].params.en;
+                    var des = Command[1].info?.en;
+                    if(params) {
+                        opts = params;
+                    }
+                    if(des) {
+                        description = des;
+                    }
+                }
+            }
+            
+            toset.push({
+                name: Command[0],
+                description: description,
+                options: opts
+            });
+        }
+        await interaction.guild.commands.set(toset);
+        await interaction.editReply({ content: 'Commands loaded' });
+    }
     
     if(Commands.has(interaction.commandName)) {
         await interaction.reply({content: 'Ejecutando commando...', ephemeral: false });
@@ -81,7 +168,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         setTimeout(async () => {
             if(interaction.replied === true && did == false && interaction.webhook) {
                 try {
-                    await interaction.deleteReply();
+                    await interaction.editReply({ content: 'Comando ejecutado!' });
                 } catch (err) { }
             }
         }, 5000);
@@ -89,7 +176,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         did = true;
         if(interaction.replied === true && interaction.webhook) {
             try {
-                await interaction.deleteReply();
+                await interaction.editReply({ content: 'Comando ejecutado!' });
             } catch (err) { }
         }
         return;
@@ -100,7 +187,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         setTimeout(async () => {
             if(interaction.replied === true && did == false && interaction.webhook) {
                 try {
-                    await interaction.deleteReply();
+                    await interaction.editReply({ content: 'Comando ejecutado!' });
                 } catch (err) { }
             }
         }, 5000);
@@ -108,7 +195,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         did = true;
         if(interaction.replied === true && interaction.webhook) {
             try {
-                await interaction.deleteReply();
+                await interaction.editReply({ content: 'Comando ejecutado!' });
             } catch (err) { }
         }
         return;

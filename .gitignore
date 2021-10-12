@@ -2,6 +2,7 @@
 config.json.dev
 src/config.ts
 lib/*
+.vscode
 
 # Logs
 logs
