@@ -13,6 +13,16 @@ node setup\setup.js # Para windows
 node setup/setup.js # Para linux
 ```
 
+## Desarollo:
+Como ejecutar?
+```cmd
+# TypeScript (Desarollo)
+npm run build && node .
+
+# JavaScript Version Funcional
+node index.js
+```
+
 ## Importante:
 Es importante crear la base de datos, tienes en ./setup un .sql para phpmyadmin o directamente en setup.js ya te genera las **tablas** *(tienes que crear tu la base de datos)* para poder funcionar
 
