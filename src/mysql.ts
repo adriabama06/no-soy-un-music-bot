@@ -83,13 +83,14 @@ export class MysqlIntermediator {
         return server;
     }
 
-    async setInfo(id: string, user: string): Promise<MysqlServerInterface | false> {
+    async setInfo(id: string, language: string, user: string): Promise<MysqlServerInterface | false> {
         var server = this.get(id);
         if(!server) {
             return false;
         }
         server.info.user = user;
-        await this.query(`UPDATE ${config.mysql.tables.info} SET \`user\` = '${user}' WHERE \`id\` = '${id}'`);
+        server.info.language = language;
+        await this.query(`UPDATE ${config.mysql.tables.info} SET \`language\` = '${language}', \`user\` = '${user}' WHERE \`id\` = '${id}'`);
         return server;
     }
     public async add(id: string, user: string = '%false%'): Promise<boolean> {
@@ -97,9 +98,9 @@ export class MysqlIntermediator {
             return false;
         }
         var sqls: string[] = [
-            `INSERT INTO ${config.mysql.tables.prefix} (\`id\`, \`prefix\`, \`user\`) VALUES ('${id}', '${config.discord.defaultprefix}', '${user}');`,
-            `INSERT INTO ${config.mysql.tables.safesearch} (\`id\`, \`safesearch\`, \`user\`) VALUES ('${id}', '${config.youtube.defaultsafesearch}', '${user}');`,
-            `INSERT INTO ${config.mysql.tables.info} (\`id\`, \`user\`) VALUES ('${id}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.prefix} (\`id\`, \`prefix\`, \`user\`) VALUES ('${id}', '${config.default.prefix}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.safesearch} (\`id\`, \`safesearch\`, \`user\`) VALUES ('${id}', '${config.default.safesearch}', '${user}');`,
+            `INSERT INTO ${config.mysql.tables.info} (\`id\`, \`language\`, \`user\`) VALUES ('${id}', '${config.default.language}', '${user}');`,
             `INSERT INTO ${config.mysql.tables.queues} (\`id\`, \`queue\`, \`user\`) VALUES ('${id}', '${JSON.stringify([])}', '${user}');`
         ];
         var results = [];
@@ -111,10 +112,10 @@ export class MysqlIntermediator {
             return false;
         }
         this.servers.set(id, {
-            prefix: { id: id, prefix: config.discord.defaultprefix, user: user },
-            safesearch: { id: id, safesearch: config.youtube.defaultsafesearch, user: user },
+            prefix: { id: id, prefix: config.default.prefix, user: user },
+            safesearch: { id: id, safesearch: config.default.safesearch, user: user },
             queues: { id: id, queue: [], user: user },
-            info: { id: id, user: user }
+            info: { id: id, language: config.default.language, user: user }
         });
         return true;
     }

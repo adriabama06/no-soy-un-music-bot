@@ -15,7 +15,7 @@ import {
     StreamType,
     AudioPlayerState
 } from '@discordjs/voice';
-import { MessageEmbed, TextBasedChannels, VoiceChannel } from 'discord.js';
+import { MessageEmbed, StageChannel, TextBasedChannels, VoiceChannel } from 'discord.js';
 import ytdl, { videoInfo } from 'ytdl-core';
 import { ServerManagerInterface, ServerManagerOptionsInterface } from './interfaces';
 import { messageDelete } from './util';
@@ -33,7 +33,7 @@ export class ServerManager implements ServerManagerInterface {
         skip: false
     };
     constructor() { }
-    createConnection(channel: VoiceChannel): VoiceConnection {
+    createConnection(channel: VoiceChannel | StageChannel): VoiceConnection {
         this.connection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,

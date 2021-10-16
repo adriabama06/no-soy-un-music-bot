@@ -9,7 +9,7 @@ export interface MysqlServerInterface {
     prefix: {id: string, prefix: string, user: string},
     safesearch: {id: string, safesearch: string, user: string},
     queues: {id: string, queue: videoInfo[] | string, user: string},
-    info: {id: string, user: string},
+    info: {id: string, language: string, user: string},
 }
 
 export interface ClientConfigInterface {
@@ -40,7 +40,8 @@ export interface CommandRunInterface {
     Mysql: MysqlIntermediator,
     Servers: Map<string, ServerManager>,
     Commands: Map<string, CommandInterface>,
-    Alias: Map<string, CommandInterface>
+    Alias: Map<string, CommandInterface>,
+    server: MysqlServerInterface
 }
 
 export interface CommandInterface {
