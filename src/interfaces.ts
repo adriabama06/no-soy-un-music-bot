@@ -24,16 +24,6 @@ export interface ServerManagerOptionsInterface {
     skip: boolean
 }
 
-export interface ServerManagerInterface {
-    songs: videoInfo[],
-    dispatcher: PlayerSubscription | undefined,
-    connection: VoiceConnection | undefined,
-    audioplayer: AudioPlayer | undefined,
-    audioresource: AudioResource | undefined,
-    channel: TextBasedChannels | undefined,
-    options: ServerManagerOptionsInterface
-}
-
 export interface CommandRunInterface {
     client: Client,
     interaction: CommandInteraction,

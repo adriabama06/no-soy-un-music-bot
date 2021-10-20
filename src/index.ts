@@ -5,7 +5,6 @@ import config from './config';
 import { loadCommands } from './commandHandler';
 import { ServerManager } from './servers';
 import { MysqlIntermediator } from './mysql';
-import command from './cmds/examplecmd';
 
 
 const client: Client = new Client({
@@ -58,8 +57,16 @@ client.on('ready', async () => {
     }
 });
 
+
+/**
+ * @see https://support-dev.discord.com/hc/en-us/articles/4404772028055-Message-Content-Access-Deprecation-for-Verified-Bots
+ * @example
+ * client.on('messageCreate', async (message) => {
+ *  return console.log('Please read the article first');
+ * });
+ */
 client.on('interactionCreate', async (interaction: Interaction) => {
-    if(!interaction.isCommand() || !interaction.guild?.id || !interaction.member) {
+    if(!interaction.isCommand() || !interaction.guild || !interaction.member) {
         return;
     }
     if(!Servers.has(interaction.guild?.id)) {
@@ -83,7 +90,6 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     for(const v of interaction.options.data) {
         console.log(`${v.name}${v.value ? ` - ${v.value.toString()}` : ''}`);
     }
-    console.log('\n');
     
     if(interaction.commandName === 'setup') {
         var languageSelected = interaction.options.getString('language');
@@ -169,85 +175,13 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     }
     
     if(Commands.has(interaction.commandName)) {
-        if(server.info.language == 'es') {
-            await interaction.reply({content: 'Ejecutando comando...', ephemeral: false });
-        }
-        if(server.info.language == 'en') {
-            await interaction.reply({content: 'Running command...', ephemeral: false });
-        }
-        var did = false;
-        setTimeout(async () => {
-            if(interaction.replied === true && did == false && interaction.webhook && server) {
-                try {
-                    if(server.info.language == 'es') {
-                        await interaction.editReply({ content: '¡Comando finalizado!' });
-                    }
-                    if(server.info.language == 'en') {
-                        await interaction.editReply({ content: 'Command ended!' });
-                    }
-                } catch (err) { }
-            }
-        }, 5000);
-        setTimeout(async () => {
-            if(interaction.replied === true && did == false && interaction.webhook) {
-                try {
-                    await interaction.deleteReply();
-                } catch (err) { }
-            }
-        }, 30000);
+        await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
         await Commands.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server});
-        did = true;
-        if(interaction.replied === true && interaction.webhook) {
-            try {
-                if(server.info.language == 'es') {
-                    await interaction.editReply({ content: '¡Comando finalizado!' });
-                }
-                if(server.info.language == 'en') {
-                    await interaction.editReply({ content: 'Command ended!' });
-                }
-            } catch (err) { }
-        }
         return;
     }
     if(Alias.has(interaction.commandName)) {
-        if(server.info.language == 'es') {
-            await interaction.reply({content: 'Ejecutando comando...', ephemeral: false });
-        }
-        if(server.info.language == 'en') {
-            await interaction.reply({content: 'Running command...', ephemeral: false });
-        }
-        var did = false;
-        setTimeout(async () => {
-            if(interaction.replied === true && did == false && interaction.webhook && server) {
-                try {
-                    if(server.info.language == 'es') {
-                        await interaction.editReply({ content: '¡Comando finalizado!' });
-                    }
-                    if(server.info.language == 'en') {
-                        await interaction.editReply({ content: 'Command ended!' });
-                    }
-                } catch (err) { }
-            }
-        }, 5000);
-        setTimeout(async () => {
-            if(interaction.replied === true && did == false && interaction.webhook) {
-                try {
-                    await interaction.deleteReply();
-                } catch (err) { }
-            }
-        }, 30000);
+        await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
         await Alias.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server});
-        did = true;
-        if(interaction.replied === true && interaction.webhook) {
-            try {
-                if(server.info.language == 'es') {
-                    await interaction.editReply({ content: '¡Comando finalizado!' });
-                }
-                if(server.info.language == 'en') {
-                    await interaction.editReply({ content: 'Command ended!' });
-                }
-            } catch (err) { }
-        }
         return;
     }
 });

@@ -1,6 +1,5 @@
 /**
- * @author adriabama06
- * @see https://github.com/adriabama06/no-soy-un-music-bot
+ * @see https://github.com/adriabama06/no-soy-un-music-bot/blob/main/setup/music.sql
  */
 
 import mysql from 'mysql';

@@ -17,23 +17,23 @@ import {
 } from '@discordjs/voice';
 import { MessageEmbed, StageChannel, TextBasedChannels, VoiceChannel } from 'discord.js';
 import ytdl, { videoInfo } from 'ytdl-core';
-import { ServerManagerInterface, ServerManagerOptionsInterface } from './interfaces';
+import { ServerManagerOptionsInterface } from './interfaces';
 import { messageDelete } from './util';
 
-export class ServerManager implements ServerManagerInterface {
-    songs: videoInfo[] = [];
-    dispatcher: PlayerSubscription | undefined;
-    connection: VoiceConnection | undefined;
-    audioplayer: AudioPlayer | undefined;
-    audioresource: AudioResource<unknown> | undefined;
-    channel: TextBasedChannels | undefined;
-    options: ServerManagerOptionsInterface = {
+export class ServerManager {
+    public songs: videoInfo[] = [];
+    public dispatcher: PlayerSubscription | undefined;
+    public connection: VoiceConnection | undefined;
+    protected audioplayer: AudioPlayer | undefined; // Protected becuase is not neccesary acces out there
+    protected audioresource: AudioResource<unknown> | undefined; // Protected becuase is not neccesary acces out there
+    protected channel: TextBasedChannels | undefined;
+    public options: ServerManagerOptionsInterface = {
         volume: 100,
         loop: false,
         skip: false
     };
     constructor() { }
-    createConnection(channel: VoiceChannel | StageChannel): VoiceConnection {
+    public createConnection(channel: VoiceChannel | StageChannel): VoiceConnection {
         this.connection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
@@ -41,10 +41,10 @@ export class ServerManager implements ServerManagerInterface {
         });
         return this.connection;
     }
-    getConnection(guildId: string): VoiceConnection | undefined {
+    public getConnection(guildId: string): VoiceConnection | undefined {
         return getVoiceConnection(guildId);
     }
-    endConnection(): boolean {
+    public endConnection(): boolean {
         if(!this.connection) {
             return false;
         }
@@ -58,11 +58,11 @@ export class ServerManager implements ServerManagerInterface {
         }
         return true;
     }
-    createPlayer(): AudioPlayer {
+    public createPlayer(): AudioPlayer {
         this.audioplayer = createAudioPlayer();
         return this.audioplayer;
     }
-    endPlayer(force: boolean = false): boolean {
+    public endPlayer(force: boolean = false): boolean {
         if(!this.audioplayer) {
             return false;
         }
@@ -70,7 +70,7 @@ export class ServerManager implements ServerManagerInterface {
         this.audioplayer = undefined;
         return true;
     }
-    endAudioSource(): boolean {
+    public endAudioSource(): boolean {
         if(!this.audioresource) {
             return false;
         }
@@ -137,36 +137,37 @@ export class ServerManager implements ServerManagerInterface {
         });
         return;
     }
-    pause(): boolean {
+    public pause(): boolean {
         if(!this.dispatcher) {
             return false;
         }
         this.dispatcher.player.pause(true);
         return true;
     }
-    unpause(): boolean {
+    public unpause(): boolean {
         if(!this.dispatcher) {
             return false;
         }
         this.dispatcher.player.unpause();
         return true;
     }
-    end(): void {
+    public end(): void {
         this.endPlayer();
         this.endAudioSource();
         this.endConnection();
         return;
     }
-    setLogChannel(channel: TextBasedChannels): void {
+    public setLogChannel(channel: TextBasedChannels): void {
         this.channel = channel;
         return;
     }
     /**
      * Idk now not work
      * Someone can help me about volume?
+     * I set this to protected because now not works, only use for testing now
      * @param {number} volume send 0% to 100%
      */
-    setVolume(volume: number): boolean {
+    protected setVolume(volume: number): boolean {
         if(!this.audioresource) {
             return false;
         }
