@@ -77,8 +77,11 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     }
 
     var server = Mysql.get(interaction.guild.id);
-
     if(!server) {
+        return;
+    }
+    var music = Servers.get(interaction.guild.id);
+    if(!music) {
         return;
     }
 
@@ -176,12 +179,12 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     
     if(Commands.has(interaction.commandName)) {
         await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
-        await Commands.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server});
+        await Commands.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server, music});
         return;
     }
     if(Alias.has(interaction.commandName)) {
         await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
-        await Alias.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server});
+        await Alias.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server, music});
         return;
     }
 });

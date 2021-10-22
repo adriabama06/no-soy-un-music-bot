@@ -31,7 +31,8 @@ export interface CommandRunInterface {
     Servers: Map<string, ServerManager>,
     Commands: Map<string, CommandInterface>,
     Alias: Map<string, CommandInterface>,
-    server: MysqlServerInterface
+    server: MysqlServerInterface,
+    music: ServerManager
 }
 
 export interface CommandInterface {
