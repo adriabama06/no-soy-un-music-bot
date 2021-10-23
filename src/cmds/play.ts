@@ -63,13 +63,13 @@ const command: CommandInterface = {
             if(validateURL(video)) {
                 v = await getInfo(video);
             }
-            if(video === null) {
+            if(!v) {
                 const r = await search(video, server.safesearch.safesearch);
                 if(r) {
                     v = await getInfo(r);
                 }
             }
-            if(v === undefined) {
+            if(!v) {
                 const embed = new MessageEmbed();
                 if(server.info.language === 'es') {
                     embed.setDescription(`No se pudo encontrar el video, verifique si el url o el titulo es correcto`);
@@ -101,21 +101,12 @@ const command: CommandInterface = {
         if(!music.connection) {
             music.createConnection(interaction.member.voice.channel);
         }
-        const embed = new MessageEmbed();
-        
-        if(server.info.language === 'es') {
-            embed.setDescription(`¡ Me acabo de conectar !`);
+        if(!music.dispatcher) {
+            music.play();
+            if(!music.channel) {
+                music.setLogChannel(interaction.channel);
+            }
         }
-        if(server.info.language === 'en') {
-            embed.setDescription(`I just join !`);
-        }
-        embed.setTimestamp();
-        embed.setColor("RANDOM");
-        const msg = await interaction.channel.send({
-            embeds: [embed]
-        });
-        await messageDelete(msg, interaction.member.id);
-        return true;
     }
 }
 

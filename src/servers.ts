@@ -26,7 +26,7 @@ export class ServerManager {
     public connection: VoiceConnection | undefined;
     protected audioplayer: AudioPlayer | undefined; // Protected becuase is not neccesary acces out there
     protected audioresource: AudioResource<unknown> | undefined; // Protected becuase is not neccesary acces out there
-    protected channel: TextBasedChannels | undefined;
+    public channel: TextBasedChannels | undefined;
     public options: ServerManagerOptionsInterface = {
         volume: 100,
         loop: false,
@@ -83,7 +83,7 @@ export class ServerManager {
         if(!this.audioplayer) {
             this.createPlayer();
         }
-        this.audioresource = createAudioResource(ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'highestaudio' }), { inputType: StreamType.WebmOpus });
+        this.audioresource = createAudioResource(ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly' }), { inputType: StreamType.Arbitrary, inlineVolume: true });
         this.audioplayer?.play(this.audioresource);
         if(!this.audioplayer) {
             return;

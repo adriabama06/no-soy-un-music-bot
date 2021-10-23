@@ -1,17 +1,17 @@
 import request from 'request';
 import config from './config';
 
-export default async function (title: string, safesearch: string = "1"): Promise<string | undefined> {
+export default async function (title: string, safesearch: string = '0'): Promise<string | undefined> {
     return new Promise(async (resolve) => {
-        var s;
-        if(safesearch === "0") {
-            s = "none";
+        var s = 'none';
+        if(safesearch === '0') {
+            s = 'none';
         }
-        if(safesearch === "1") {
-            s = "moderate";
+        if(safesearch === '1') {
+            s = 'moderate';
         }
-        if(safesearch === "2") {
-            s = "strict";
+        if(safesearch === '2') {
+            s = 'strict';
         }
         request({
             url: `https://www.googleapis.com/youtube/v3/search?q=${title}&safeSearch=${s}&type=video&key=${config.youtube.token}`,
