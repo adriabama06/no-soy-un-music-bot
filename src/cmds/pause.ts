@@ -4,35 +4,31 @@ import { CommandInterface, CommandRunInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
-    name: 'join',
+    name: 'pause',
     info: {
-        es: 'Entra al canal de voz',
-        en: 'Join to the vioce channel'
+        es: 'Pausa la musica',
+        en: 'Pause the music'
     },
     longinfo: {
         es: 'Ejecuta un comando de prueba',
         en: 'Execute test command'
     },
     params: undefined,
-    alias: ["entra"],
-    run: async ({interaction, server, Servers}: CommandRunInterface): Promise<boolean | void> => {
+    alias: ["pausa"],
+    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
         if(!(interaction.member instanceof GuildMember)) {
             return false;
         }
-        const Music = Servers.get(interaction.guild.id);
-        if(!Music) {
-            return false;
-        }
         if(!interaction.member.voice.channel) {
             const embed = new MessageEmbed();
             if(server.info.language === 'es') {
-                embed.setDescription(`Nececitas estar en un canal de voz para que el bot se pueda unir`);
+                embed.setDescription(`No veo que estes en un canal de voz, evita molestar a los demas`);
             }
             if(server.info.language === 'en') {
-                embed.setDescription(`You need get in voice channel for the bot can be join`);
+                embed.setDescription(`I can't see you in a voice channel, avoid disturbing others`);
             }
             embed.setTimestamp();
             embed.setColor("RANDOM");
@@ -42,13 +38,13 @@ const command: CommandInterface = {
             messageDelete(msg, interaction.member.id);
             return;
         }
-        if(Music?.connection) {
+        if(!music.connection) {
             const embed = new MessageEmbed();
             if(server.info.language === 'es') {
-                embed.setDescription(`Ya estoy conectado, verifica los canales, si no estoy ejecuta: \`/leave\` si no se repara avise a un staff, o ejecute \`/info\` ves al github y añade el error`);
+                embed.setDescription(`No estoy conectado en ningun canal de voz, verifica los canales, prueba de ejecutar: \`/join\` si no se repara avise a un staff, o ejecute \`/info\` ves al github y añade el error`);
             }
             if(server.info.language === 'en') {
-                embed.setDescription(`I'm connected, verify the channels, else execute: \`/leave\` or call to staff, or execute \`/info\` and at github add the error`);
+                embed.setDescription(`I'm not connected right now in a voice channel, try make join to voice: \`/join\` or call to staff, or execute \`/info\` and at github add the error`);
             }
             embed.setTimestamp();
             embed.setColor("RANDOM");
@@ -58,14 +54,14 @@ const command: CommandInterface = {
             messageDelete(msg, interaction.member.id);
             return;
         }
-        Music.createConnection(interaction.member.voice.channel);
+        music.pause();
         const embed = new MessageEmbed();
         
         if(server.info.language === 'es') {
-            embed.setDescription(`¡ Me acabo de conectar !`);
+            embed.setTitle(`Musica pausada`);
         }
         if(server.info.language === 'en') {
-            embed.setDescription(`I just join !`);
+            // add here
         }
         embed.setTimestamp();
         embed.setColor("RANDOM");

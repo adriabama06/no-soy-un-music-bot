@@ -34,3 +34,7 @@ export async function messageDelete(message: Message, userid?: string, timeout: 
         });
     });
 }
+
+export function MilisecondsToTime(time: number): string {
+   return new Date(time).toISOString().substr(11, 8);
+}

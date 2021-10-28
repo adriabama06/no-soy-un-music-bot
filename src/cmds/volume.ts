@@ -4,26 +4,39 @@ import { CommandInterface, CommandRunInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
-    name: 'leave',
+    name: 'volume',
     info: {
-        es: 'Abandona el canal de voz',
-        en: 'Leave the voice channel'
+        es: 'Cambia el volumen',
+        en: 'Change the volume'
     },
     longinfo: {
         es: 'Ejecuta un comando de prueba',
         en: 'Execute test command'
     },
-    params: undefined,
-    alias: ["exit"],
-    run: async ({interaction, server, Servers}: CommandRunInterface): Promise<boolean | void> => {
+    params: {
+        es: [
+            {
+                name: 'volume',
+                type: 'INTEGER',
+                required: false,
+                description: 'Volumend de 0 hasta 100'
+            }
+        ],
+        en: [
+            {
+                name: 'volume',
+                type: 'INTEGER',
+                required: false,
+                description: 'Volume from 0 to 100'
+            }
+        ]
+    },
+    alias: undefined,
+    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
         if(!(interaction.member instanceof GuildMember)) {
-            return false;
-        }
-        const Music = Servers.get(interaction.guild.id);
-        if(!Music) {
             return false;
         }
         if(!interaction.member.voice.channel) {
@@ -42,7 +55,7 @@ const command: CommandInterface = {
             messageDelete(msg, interaction.member.id);
             return;
         }
-        if(!Music?.connection) {
+        if(!music.connection) {
             const embed = new MessageEmbed();
             if(server.info.language === 'es') {
                 embed.setDescription(`No estoy conectado en ningun canal de voz, verifica los canales, prueba de ejecutar: \`/join\` si no se repara avise a un staff, o ejecute \`/info\` ves al github y añade el error`);
@@ -58,14 +71,32 @@ const command: CommandInterface = {
             messageDelete(msg, interaction.member.id);
             return;
         }
-        Music.end();
+        var volume = interaction.options.getInteger('volume');
+        if(volume) {
+            music.setVolume(volume);
+            const embed = new MessageEmbed();
+            
+            if(server.info.language === 'es') {
+                embed.setTitle(`El volumen se ha puesto a: ${volume}%`);
+            }
+            if(server.info.language === 'en') {
+                // add here
+            }
+            embed.setTimestamp();
+            embed.setColor("RANDOM");
+            const msg = await interaction.channel.send({
+                embeds: [embed]
+            });
+            messageDelete(msg, interaction.member.id);
+            return true;
+        }
         const embed = new MessageEmbed();
         
         if(server.info.language === 'es') {
-            embed.setDescription(`¡ Adios !`);
+            embed.setTitle(`El volumen actual es: ${music.options.volume}`);
         }
         if(server.info.language === 'en') {
-            embed.setDescription(`Bye !`);
+            // add here
         }
         embed.setTimestamp();
         embed.setColor("RANDOM");

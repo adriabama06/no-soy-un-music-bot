@@ -24,8 +24,8 @@ export class ServerManager {
     public songs: videoInfo[] = [];
     public dispatcher: PlayerSubscription | undefined;
     public connection: VoiceConnection | undefined;
-    protected audioplayer: AudioPlayer | undefined; // Protected becuase is not neccesary acces out there
-    protected audioresource: AudioResource<unknown> | undefined; // Protected becuase is not neccesary acces out there
+    public audioplayer: AudioPlayer | undefined; // Protected becuase is not neccesary acces out there
+    public audioresource: AudioResource<unknown> | undefined; // Protected becuase is not neccesary acces out there
     public channel: TextBasedChannels | undefined;
     public options: ServerManagerOptionsInterface = {
         volume: 100,
@@ -164,10 +164,9 @@ export class ServerManager {
     /**
      * Idk now not work
      * Someone can help me about volume?
-     * I set this to protected because now not works, only use for testing now
      * @param {number} volume send 0% to 100%
      */
-    protected setVolume(volume: number): boolean {
+    public setVolume(volume: number): boolean {
         if(!this.audioresource) {
             return false;
         }

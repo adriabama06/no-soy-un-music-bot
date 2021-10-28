@@ -54,7 +54,7 @@ const command: CommandInterface = {
             const msg = await interaction.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, interaction.member.id);
+            messageDelete(msg, interaction.member.id);
             return;
         }
         var video = interaction.options.getString('video');

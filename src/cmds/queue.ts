@@ -15,7 +15,24 @@ const command: CommandInterface = {
         es: 'Ejecuta un comando de prueba',
         en: 'Execute test command'
     },
-    params: undefined,
+    params: {
+        es: [
+            {
+                name: 'video',
+                type: 'STRING',
+                required: false,
+                description: 'Pon un url o nombre'
+            }
+        ],
+        en: [
+            {
+                name: 'video',
+                type: 'STRING',
+                required: false,
+                description: 'Put an url or name'
+            }
+        ]
+    },
     alias: ["canciones"],
     run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
@@ -37,7 +54,7 @@ const command: CommandInterface = {
             const msg = await interaction.channel.send({
                 embeds: [embed]
             });
-            await messageDelete(msg, interaction.member.id);
+            messageDelete(msg, interaction.member.id);
             return;
         }
         var video = interaction.options.getString('video');
