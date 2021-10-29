@@ -4,10 +4,10 @@ import { CommandInterface, CommandRunInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
-    name: 'volume',
+    name: 'skip',
     info: {
-        es: 'Cambia el volumen',
-        en: 'Change the volume'
+        es: 'Salta la cancion',
+        en: 'Skip the music'
     },
     longinfo: {
         es: 'Ejecuta un comando de prueba',
@@ -16,22 +16,22 @@ const command: CommandInterface = {
     params: {
         es: [
             {
-                name: 'volume',
+                name: 'video',
                 type: 'INTEGER',
                 required: false,
-                description: 'Volumend de 0 hasta 100'
+                description: 'Pon hasta cual saltar'
             }
         ],
         en: [
             {
-                name: 'volume',
+                name: 'video',
                 type: 'INTEGER',
                 required: false,
-                description: 'Volume from 0 to 100'
+                description: 'Put to where skip'
             }
         ]
     },
-    alias: undefined,
+    alias: ['salta'],
     run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
@@ -71,39 +71,13 @@ const command: CommandInterface = {
             messageDelete(msg, interaction.member.id);
             return;
         }
-        var volume = interaction.options.getInteger('volume');
-        if(volume) {
-            music.setVolume(volume);
-            const embed = new MessageEmbed();
-            
-            if(server.info.language === 'es') {
-                embed.setTitle(`El volumen se ha puesto a: ${volume}%`);
-            }
-            if(server.info.language === 'en') {
-                // add here
-            }
-            embed.setTimestamp();
-            embed.setColor("RANDOM");
-            const msg = await interaction.channel.send({
-                embeds: [embed]
-            });
-            messageDelete(msg, interaction.member.id);
-            return true;
+        music.options.skip = true;
+        var n = interaction.options.getInteger('video');
+        if(n) {
+            music.songs.splice(1, n-2);
         }
-        const embed = new MessageEmbed();
-        
-        if(server.info.language === 'es') {
-            embed.setTitle(`El volumen actual es: ${music.options.volume}%`);
-        }
-        if(server.info.language === 'en') {
-            // add here
-        }
-        embed.setTimestamp();
-        embed.setColor("RANDOM");
-        const msg = await interaction.channel.send({
-            embeds: [embed]
-        });
-        messageDelete(msg, interaction.member.id);
+        music.audioresource?.playStream.emit('end');
+        music.audioresource?.playStream.destroy();
         return true;
     }
 }
