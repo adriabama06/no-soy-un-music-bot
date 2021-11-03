@@ -6,7 +6,7 @@ import mysql from 'mysql';
 import ytdl from 'ytdl-core';
 
 import config from './config';
-import { MysqlServerInterface, ClientConfigInterface } from './interfaces';
+import { MysqlServerInterface, ClientConfigInterface, LanguageType } from './interfaces';
 
 export class MysqlIntermediator {
     protected servers = new Map<string, MysqlServerInterface>();
@@ -82,7 +82,7 @@ export class MysqlIntermediator {
         return server;
     }
 
-    async setInfo(id: string, language: string, user: string): Promise<MysqlServerInterface | false> {
+    async setInfo(id: string, language: LanguageType, user: string): Promise<MysqlServerInterface | false> {
         var server = this.get(id);
         if(!server) {
             return false;

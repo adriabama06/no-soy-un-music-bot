@@ -1,15 +1,20 @@
-import { ApplicationCommandOptionData, Client, CommandInteraction, Interaction, TextBasedChannels } from 'discord.js';
-import { AudioPlayer, AudioResource, PlayerSubscription, VoiceConnection } from '@discordjs/voice';
+import { ApplicationCommandOptionData, Client, CommandInteraction } from 'discord.js';
 import { videoInfo } from 'ytdl-core';
 
 import { MysqlIntermediator } from './mysql';
 import { ServerManager } from './servers';
 
+export type LanguageType = 'es' | 'en';
+
+export function isLanguageType(object: string): object is LanguageType {
+    return object === 'es' || object === 'en';
+}
+
 export interface MysqlServerInterface {
     prefix: {id: string, prefix: string, user: string},
     safesearch: {id: string, safesearch: string, user: string},
     queues: {id: string, queue: videoInfo[] | string, user: string},
-    info: {id: string, language: string, user: string},
+    info: {id: string, language: LanguageType, user: string},
 }
 
 export interface ClientConfigInterface {

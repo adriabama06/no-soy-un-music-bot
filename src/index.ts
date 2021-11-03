@@ -1,6 +1,6 @@
 import { ApplicationCommandData, ApplicationCommandOptionData, Client, Intents, Interaction } from 'discord.js';
 
-import { CommandInterface } from './interfaces';
+import { CommandInterface, isLanguageType } from './interfaces';
 import config from './config';
 import { loadCommands } from './commandHandler';
 import { ServerManager } from './servers';
@@ -99,6 +99,9 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         if(!languageSelected) {
             return;
         }
+        if(!isLanguageType(languageSelected)) {
+            return;
+        }
         Mysql.setInfo(interaction.guild.id, languageSelected, interaction.member.user.id);
         await interaction.reply({ 
             content: 'Loading commands...',
@@ -109,25 +112,15 @@ client.on('interactionCreate', async (interaction: Interaction) => {
             var description: string = "Descripcion no puesta";
             var opts: ApplicationCommandOptionData[] = [];
             if(Command[1].params) {
-                if(languageSelected === 'es') {
-                    var params = Command[1].params.es;
-                    var des = Command[1].info?.es;
-                    if(params) {
-                        opts = params;
-                    }
-                    if(des) {
-                        description = des;
-                    }
+                var params = Command[1].params[languageSelected];
+                if(params) {
+                    opts = params;
                 }
-                if(languageSelected === 'en') {
-                    var params = Command[1].params.en;
-                    var des = Command[1].info?.en;
-                    if(params) {
-                        opts = params;
-                    }
-                    if(des) {
-                        description = des;
-                    }
+            }
+            if(Command[1].info) {
+                var des = Command[1].info[languageSelected];
+                if(des) {
+                    description = des;
                 }
             }
             toset.push({

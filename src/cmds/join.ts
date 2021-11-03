@@ -15,15 +15,11 @@ const command: CommandInterface = {
     },
     params: undefined,
     alias: ["entra"],
-    run: async ({interaction, server, Servers}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
         if(!(interaction.member instanceof GuildMember)) {
-            return false;
-        }
-        const Music = Servers.get(interaction.guild.id);
-        if(!Music) {
             return false;
         }
         if(!interaction.member.voice.channel) {
@@ -42,7 +38,7 @@ const command: CommandInterface = {
             messageDelete(msg, interaction.member.id);
             return;
         }
-        if(Music?.connection) {
+        if(music.connection) {
             const embed = new MessageEmbed();
             if(server.info.language === 'es') {
                 embed.setDescription(`Ya estoy conectado, verifica los canales, si no estoy ejecuta: \`/leave\` si no se repara avise a un staff, o ejecute \`/info\` ves al github y añade el error`);
@@ -58,7 +54,7 @@ const command: CommandInterface = {
             messageDelete(msg, interaction.member.id);
             return;
         }
-        Music.createConnection(interaction.member.voice.channel);
+        music.createConnection(interaction.member.voice.channel);
         const embed = new MessageEmbed();
         
         if(server.info.language === 'es') {
