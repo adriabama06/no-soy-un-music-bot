@@ -98,7 +98,7 @@ const command: CommandInterface = {
             }
             return;
         }
-        var textos: string[] = [];
+        var texts: string[] = [];
         for(var i = 0; i < music.songs.length; i++) {
             var s = music.songs[i];
             var k: string = "";
@@ -108,18 +108,18 @@ const command: CommandInterface = {
             if(server.info.language === 'en') {
                 k = '**Now:** ';
             }
-            textos.push(`
+            texts.push(`
             ${i === 0 ? k : ''}**[${i+1}]** -> [${s.videoDetails.title}](${s.videoDetails.video_url})`);
         }
 
         var menu: string[] = [];
         var size: number = 10;
 
-        for(var i = 0; i < textos.length; i+=size) {
+        for(var i = 0; i < texts.length; i+=size) {
             var toadd: string = "";
             var ii: number = 0;
             while(ii < size) {
-                var t = textos[i+ii];
+                var t = texts[i+ii];
                 if(t) { // can be undefined, typescript don't know to this and don't show any error or warning
                     toadd += t;
                 }
@@ -129,11 +129,11 @@ const command: CommandInterface = {
         }
         const embed = new MessageEmbed();
         embed.setTitle(`${music.songs.length > size ? '1 - ' : ''}**queue** : **${interaction.guild.name}**`);
-        if(server.info.language === 'es') {
+        if(server.info.language == 'es') {
             embed.setDescription(`${menu.length === 0 ? 'no hay ninguna cancion' : menu[0]}`);
         }
-        if(server.info.language === 'en') {
-            // I'm not going to add all in english now
+        if(server.info.language == 'en') {
+            embed.setDescription(`${menu.length === 0 ? 'there not songs' : menu[0]}`);
         }
         embed.setColor("RANDOM");
 
@@ -142,7 +142,7 @@ const command: CommandInterface = {
         });
         if(music.songs.length < size) {
             await messageDelete(msg, interaction.member.id);
-            return;
+            return true;
         }
         var row = new MessageActionRow();
         row.addComponents(

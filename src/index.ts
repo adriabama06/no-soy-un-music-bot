@@ -133,28 +133,17 @@ client.on('interactionCreate', async (interaction: Interaction) => {
             var description: string = "Descripcion no puesta";
             var opts: ApplicationCommandOptionData[] = [];
             if(Command[1].params) {
-                if(languageSelected === 'es') {
-                    var params = Command[1].params.es;
-                    var des = Command[1].info?.es;
-                    if(params) {
-                        opts = params;
-                    }
-                    if(des) {
-                        description = des;
-                    }
-                }
-                if(languageSelected === 'en') {
-                    var params = Command[1].params.en;
-                    var des = Command[1].info?.en;
-                    if(params) {
-                        opts = params;
-                    }
-                    if(des) {
-                        description = des;
-                    }
+                var params = Command[1].params[languageSelected];
+                if(params) {
+                    opts = params;
                 }
             }
-            
+            if(Command[1].info) {
+                var des = Command[1].info[languageSelected];
+                if(des) {
+                    description = des;
+                }
+            }
             toset.push({
                 name: Command[0],
                 description: description,

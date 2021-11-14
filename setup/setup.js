@@ -53,7 +53,7 @@ npm.on('close', async () => {
             var sqls = [
                 `SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";`,
                 `SET time_zone = "+00:00";`,
-                'CREATE TABLE `info` (`id` varchar(30) NOT NULL, `user` varchar(30) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;',
+                'CREATE TABLE `info` (`id` varchar(30) NOT NULL, `language` varchar(30) NOT NULL, `user` varchar(30) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;',
                 'CREATE TABLE `prefix` (`id` varchar(30) NOT NULL, `prefix` varchar(30) NOT NULL DEFAULT \'' + config.discord.defaultprefix + '\', `user` varchar(30) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;',
                 'CREATE TABLE `queues` (`id` varchar(30) NOT NULL, `queue` varchar(535) NOT NULL, `user` varchar(30) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;',
                 'CREATE TABLE `safesearch` (`id` varchar(30) NOT NULL, `safesearch` int(30) NOT NULL DEFAULT 1, `user` varchar(30) NOT NULL) ENGINE=InnoDB DEFAULT CHARSET=utf8;'

@@ -1,36 +1,19 @@
-import { GuildMember, MessageEmbed } from 'discord.js';
+import { GuildMember, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
 import { CommandInterface, CommandRunInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
-    name: 'about',
+    name: 'help',
     info: {
-        es: 'Muestra informacion sobre el bot',
-        en: 'Show the bot information'
+        es: 'Muestra todos los comandos del bot',
+        en: 'Show all commands of the bot'
     },
     longinfo: {
         es: 'Ejecuta un comando de prueba',
         en: 'Execute test command'
     },
-    params: {
-        es: [
-            {
-                name: 'user',
-                type: 'USER',
-                required: false,
-                description: 'a quien quieres probar'
-            }
-        ],
-        en: [
-            {
-                name: 'user',
-                type: 'USER',
-                required: false,
-                description: 'who we like test'
-            }
-        ]
-    },
-    alias: ["info", "bot"],
+    params: undefined,
+    alias: ["ayuda"],
     run: async ({interaction, server, Commands}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
@@ -40,43 +23,64 @@ const command: CommandInterface = {
         }
         var texts: string[] = [];
         for(const command of Commands) {
-            var name: string = "";
+            var name: string = command[1].name ? command[1].name : '';
 
             var pref_bdesc: string = "";
             var bdesc: string = "";
+            if(command[1].info) {
+                var bd = command[1].info[server.info.language];
+                if(bd) {
+                    bdesc = bd;
+                }
+            }
             
             var pref_ldesc: string = "";
             var ldesc: string = "";
+            if(command[1].longinfo) {
+                var ld = command[1].longinfo[server.info.language];
+                if(ld) {
+                    ldesc = ld;
+                }
+            }
 
             var pref_alias: string = "";
             var alias: string = "";
+            if(command[1].alias) {
+                alias = command[1].alias.join(' | ');
+            }
             if(server.info.language == 'es') {
-                name = command[1].name ? command[1].name : 'Nombre no puesto';
                 pref_bdesc = 'Descripcion basica';
-                if(command[1].info) {
-                    var i = command[1].info[server.info.language];
-                    if(i) {
-                        bdesc = i;
-                    }
+                pref_ldesc = 'Descripcion completa';
+                pref_alias = 'Alias';
+
+                if(name == '') {
+                    name = 'Nombre no puesto';
                 }
-                if(bdesc === '') {
+                
+                if(bdesc == '') {
                     bdesc = 'Descripcion basica no puesta';
                 }
 
-                pref_ldesc = 'Descripcion completa';
-                if(command[1].longinfo) {
-                    var i = command[1].longinfo[server.info.language];
-                    if(i) {
-                        bdesc = i;
-                    }
-                }
-                if(bdesc === '') {
-                    bdesc = 'Descripcion completa no puesta';
-                }
+                if(ldesc == '') {
+                    ldesc = 'Descripcion completa no puesta';
+                } 
+            }
+            if(server.info.language == 'en') {
+                pref_bdesc = 'Basic description';
+                pref_ldesc = 'Full description';
                 pref_alias = 'Alias';
-                if(command[1].alias) {
-                    alias = command[1].alias.join(' | ');
+
+                if(name == '') {
+                    name = 'Name not set';
                 }
+                
+                if(bdesc == '') {
+                    bdesc = 'Basic description not set';
+                }
+
+                if(ldesc == '') {
+                    ldesc = 'Full description not set';
+                } 
             }
             texts.push(`
             
@@ -85,37 +89,132 @@ const command: CommandInterface = {
             **${pref_ldesc}**: ${ldesc}
             **${pref_alias}**: ${alias}`);
         }
+
+        var menu: string[] = [];
+        var size: number = 5;
+
+        for(var d = 0; d < texts.length; d++) {
+            var toadd: string = "";
+            var ii: number = 0;
+            while(ii < size) {
+                var t = texts[d+ii];
+                if(t) {
+                    toadd += t;
+                }
+                ii++;
+            }
+            menu.push(toadd);
+        }
+        console.log(menu);
         const embed = new MessageEmbed();
         embed.setTimestamp();
-        embed.setColor("RANDOM");
-        embed.setThumbnail("https://avatars.githubusercontent.com/u/68083226?s=400&u=42b76105fcfa4210be4c51b8296212da8a310355&v=4");
+        embed.setColor('RANDOM');
         if(server.info.language == 'es') {
-            embed.setTitle(`Informacion sobre el bot`);
-            embed.setDescription(`Este bot esta echo por: adriabama06
-            Todos los arhcivos sobre el bot estan en github: cualquiera puede descargar y usar el bot
-            
-            Librerias usadas:
-            - [discord.js](https://github.com/discordjs/discord.js) - Para el bot de discord
-            - [mysql](https://github.com/mysqljs/mysql) - Para el acceso a una Base de Datos [MariaDB](https://mariadb.org/)
-            - [ytdl-core](https://github.com/fent/node-ytdl-core) - Para obtener la informacion de forma rapida de un video de [YouTube](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-            - [ytdl-core-discord](https://github.com/amishshah/ytdl-core-discord) - Para tener la entrada de video en opus para evitar usar ffmpeg para que vaya más rapido \`no lo uso temporalmente por pruebas que estoy haciendo\``);
+            embed.setTitle('**Ayuda pagina**: 1');
         }
         if(server.info.language == 'en') {
-            embed.setTitle(`Infromation about the bot`);
-            embed.setDescription(`This bot was made by: adriabama06
-            All files are on github: any can donwload and use the bot
-            
-            Libs used:
-            - [discord.js](https://github.com/discordjs/discord.js) - For the discord bot
-            - [mysql](https://github.com/mysqljs/mysql) - For the acces of database [MariaDB](https://mariadb.org/)
-            - [ytdl-core](https://github.com/fent/node-ytdl-core) - For get youtube information [YouTube](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-            - [ytdl-core-discord](https://github.com/amishshah/ytdl-core-discord) - Get directly opus codec for auido \`no lo uso temporalmente por pruebas que estoy haciendo\``);
+            embed.setTitle('**Help page**: 1');
         }
+        embed.setDescription(menu[0]);
 
         const msg = await interaction.channel.send({
             embeds: [embed]
         });
-        messageDelete(msg, interaction.member.id);
+        if(menu.length < size) {
+            await messageDelete(msg, interaction.member.id);
+            return true;
+        }
+        var row = new MessageActionRow();
+        row.addComponents(
+            new MessageButton()
+            .setCustomId('back')
+            .setEmoji('⬅')
+            .setStyle('SUCCESS')
+        );
+        row.addComponents(
+            new MessageButton()
+            .setCustomId('next')
+            .setEmoji('➡')
+            .setStyle('SUCCESS')
+        );
+        row.addComponents(
+            new MessageButton()
+            .setCustomId('exit')
+            .setEmoji('❌')
+            .setStyle('SECONDARY')
+        );
+        await msg.edit({
+            components: [row]
+        });
+        const filter = (i: any) => (i.customId === 'back' || i.customId === 'next' || i.customId === 'exit');// && (i.user.id === .member.id);
+        var index: number = 0;
+        const collector = msg.createMessageComponentCollector({
+            filter: filter,
+            time: 4 * 1000 * 60
+        });
+        collector.on('collect', async (i) => {
+            i.deferUpdate();
+            if(i.customId === 'exit') {
+                collector.stop('user');
+                return;
+            }
+            if(i.customId === 'back') {
+                if(index === 0 || index < 0) {
+                    index = menu.length-1;
+                    if(server.info.language == 'es') {
+                        embed.setTitle(`**Ayuda pagina**: ${index+1}`);
+                    }
+                    if(server.info.language == 'en') {
+                        embed.setTitle(`**Help page**: ${index+1}`);
+                    }
+                    embed.setDescription(menu[index]);
+                    await msg.edit({
+                        embeds: [embed]
+                    });
+                } else {
+                    index--;
+                    if(server.info.language == 'es') {
+                        embed.setTitle(`**Ayuda pagina**: ${index+1}`);
+                    }
+                    if(server.info.language == 'en') {
+                        embed.setTitle(`**Help page**: ${index+1}`);
+                    }
+                    embed.setDescription(menu[index]);
+                    await msg.edit({
+                        embeds: [embed]
+                    });
+                }
+            } else if(i.customId === 'next') {
+                if(index === menu.length-1 || index > menu.length-1) {
+                    index = 0;
+                    if(server.info.language == 'es') {
+                        embed.setTitle(`**Ayuda pagina**: ${index+1}`);
+                    }
+                    if(server.info.language == 'en') {
+                        embed.setTitle(`**Help page**: ${index+1}`);
+                    }
+                    embed.setDescription(menu[index]);
+                    await msg.edit({
+                        embeds: [embed]
+                    });
+                } else {
+                    index++;
+                    if(server.info.language == 'es') {
+                        embed.setTitle(`**Ayuda pagina**: ${index+1}`);
+                    }
+                    if(server.info.language == 'en') {
+                        embed.setTitle(`**Help page**: ${index+1}`);
+                    }
+                    embed.setDescription(menu[index]);
+                    await msg.edit({
+                        embeds: [embed]
+                    });
+                }
+            }
+        });
+        collector.on('end', async () => {
+            await msg.delete();
+        });
         return true;
     }
 }

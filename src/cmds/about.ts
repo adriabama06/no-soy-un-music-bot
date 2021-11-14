@@ -12,25 +12,8 @@ const command: CommandInterface = {
         es: 'Ejecuta un comando de prueba',
         en: 'Execute test command'
     },
-    params: {
-        es: [
-            {
-                name: 'user',
-                type: 'USER',
-                required: false,
-                description: 'a quien quieres probar'
-            }
-        ],
-        en: [
-            {
-                name: 'user',
-                type: 'USER',
-                required: false,
-                description: 'who we like test'
-            }
-        ]
-    },
-    alias: ["info", "bot"],
+    params: undefined,
+    alias: ["bot"],
     run: async ({interaction, server}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;

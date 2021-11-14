@@ -28,6 +28,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `info` (
   `id` varchar(30) NOT NULL,
+  `language` varchar(30) NOT NULL,
   `user` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
