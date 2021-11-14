@@ -23,7 +23,10 @@ const command: CommandInterface = {
         }
         var texts: string[] = [];
         for(const command of Commands) {
-            var name: string = command[1].name ? command[1].name : '';
+            var name: string = '';
+            if(command[1].name) {
+                name = command[1].name;
+            }
 
             var pref_bdesc: string = "";
             var bdesc: string = "";
@@ -82,6 +85,7 @@ const command: CommandInterface = {
                     ldesc = 'Full description not set';
                 } 
             }
+
             texts.push(`
             
             **/${name}**
@@ -93,19 +97,18 @@ const command: CommandInterface = {
         var menu: string[] = [];
         var size: number = 5;
 
-        for(var d = 0; d < texts.length; d++) {
+        for(var d = 0; d < texts.length; d+=size) {
             var toadd: string = "";
-            var ii: number = 0;
-            while(ii < size) {
-                var t = texts[d+ii];
+            var s: number = 0;
+            while(s < size) {
+                var t = texts[d+s];
                 if(t) {
                     toadd += t;
                 }
-                ii++;
+                s++;
             }
             menu.push(toadd);
         }
-        console.log(menu);
         const embed = new MessageEmbed();
         embed.setTimestamp();
         embed.setColor('RANDOM');
@@ -120,7 +123,7 @@ const command: CommandInterface = {
         const msg = await interaction.channel.send({
             embeds: [embed]
         });
-        if(menu.length < size) {
+        if(texts.length < size) {
             await messageDelete(msg, interaction.member.id);
             return true;
         }
