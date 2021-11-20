@@ -175,6 +175,21 @@ export class MysqlIntermediator {
         }
         return false;
     }
+    public async UnParseQueue(songs: ytdl.videoInfo[], max: number = config.mysql.maxQueueSize): Promise<string[]> {
+        var parsed: string[] = [];
+        for(var i = 0; i < songs.length; i++) {
+            parsed.push(songs[i].videoDetails.videoId);
+        }
+        if(JSON.stringify(parsed).length > max) {
+            while(JSON.stringify(parsed).length > max) {
+                parsed.pop();
+            }
+        }
+        return parsed;
+    }
+    public isMysqlServer(server: any): server is MysqlServerInterface {
+        return server.prefix && server.safesearch && server.queues && server.info;
+    }
     protected async query(sql: string): Promise<any[] | 'error' | 'no servers found'> {
         return new Promise(async (resolve) => {
             this.connection.query(sql, async (error, results, fields) => {
