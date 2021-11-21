@@ -3,7 +3,7 @@ Bot de musica que he creado con el codigo publico para que mas gente pueda desca
 
 ## Mi bot de musica:
 Si quieres probar el bot, puedes invitarlo aqui:
-[no soy un "MusicBot"](https://discord.com/api/oauth2/authorize?client_id=767017761725087774&permissions=517609942832&scope=bot%20applications.commands)
+[no soy un "MusicBot"](https://discord.com/api/oauth2/authorize?client_id=767017761725087774&permissions=415067598640&scope=bot%20applications.commands)
 
 Ejecutar tras descargar para instalar los npm:
 ```cmd
