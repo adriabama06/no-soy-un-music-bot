@@ -1,21 +1,37 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
-
 import { CommandInterface, CommandRunInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
-    name: 'leave',
+    name: 'stop',
     info: {
-        es: 'Abandona el canal de voz',
-        en: 'Leave the voice channel'
+        es: 'Limpia la queue y se desconecta',
+        en: 'Clear the queue and disconnect'
     },
     longinfo: {
         es: 'Ejecuta un comando de prueba',
         en: 'Execute test command'
     },
-    params: undefined,
-    alias: ["exit"],
-    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
+    params: {
+        es: [
+            {
+                name: 'savequeue',
+                type: 'BOOLEAN',
+                required: false,
+                description: 'Quieres guardar la queue antes de borrarla'
+            }
+        ],
+        en: [
+            {
+                name: 'savequeue',
+                type: 'BOOLEAN',
+                required: false,
+                description: 'Do you want to save the queue before deleting it'
+            }
+        ]
+    },
+    alias: ['end'],
+    run: async ({interaction, server, music, Mysql}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -55,20 +71,25 @@ const command: CommandInterface = {
             return;
         }
         music.end();
-        const embed = new MessageEmbed();
-        
-        if(server.info.language === 'es') {
-            embed.setDescription(`¡ Adios !`);
+        var savequeue = interaction.options.getBoolean('savequeue');
+        if(savequeue != null && savequeue == true) {
+            var parsed: string[] = await Mysql.UnParseQueue(music.songs);
+            await Mysql.setQueue(interaction.guild.id, parsed, interaction.member.id);
         }
-        if(server.info.language === 'en') {
-            embed.setDescription(`Bye !`);
+        music.songs = [];
+        const embed = new MessageEmbed();
+        if(server.info.language == 'es') {
+            embed.setTitle(`Se finalizo la musica y se borro la queue`);
+        }
+        if(server.info.language == 'en') {
+            embed.setTitle(`Music ended and queue deleted`);
         }
         embed.setTimestamp();
         embed.setColor("RANDOM");
         const msg = await interaction.channel.send({
             embeds: [embed]
         });
-        messageDelete(msg, interaction.member.id);
+        messageDelete(msg, interaction.member.id, 15000);
         return true;
     }
 }
