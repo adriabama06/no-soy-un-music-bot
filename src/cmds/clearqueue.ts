@@ -76,10 +76,10 @@ const command: CommandInterface = {
             music.songs.splice(from, to+1);
             const embed = new MessageEmbed();
             if(server.info.language === 'es') {
-                embed.setDescription(`Se borraron ${from+to} canciones`);
+                embed.setDescription(`Se borraron ${from+to+1} canciones`);
             }
             if(server.info.language === 'en') {
-                embed.setDescription(`Deleted ${from+to} songs`);
+                embed.setDescription(`Deleted ${from+to+1} songs`);
             }
             embed.setTimestamp();
             embed.setColor("RANDOM");
