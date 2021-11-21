@@ -3,17 +3,17 @@ import { CommandInterface, CommandRunInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
-    name: 'loadqueue',
+    name: 'savequeue',
     info: {
-        es: 'Carga una queue guardada',
-        en: 'Load an saved queue'
+        es: 'Guarda la queue actual',
+        en: 'Save currrent queue'
     },
     longinfo: {
         es: 'Ejecuta un comando de prueba',
         en: 'Execute test command'
     },
     params: undefined,
-    alias: ["lq"],
+    alias: ["sq"],
     run: async ({interaction, server, Mysql, music}: CommandRunInterface): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
