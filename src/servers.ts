@@ -17,6 +17,7 @@ import {
 } from '@discordjs/voice';
 import { MessageEmbed, StageChannel, TextBasedChannels, VoiceChannel } from 'discord.js';
 import ytdl, { videoInfo } from 'ytdl-core';
+import ytldDiscord from 'ytdl-core-discord';
 import { MysqlServerInterface, ServerManagerOptionsInterface } from './interfaces';
 import { messageDelete } from './util';
 
@@ -84,7 +85,7 @@ export class ServerManager {
         if(!this.audioplayer) {
             this.createPlayer();
         }
-        this.audioresource = createAudioResource(ytdl(this.songs[0].videoDetails.video_url, { filter: 'audioonly' }), { inputType: StreamType.Arbitrary, inlineVolume: true });
+        this.audioresource = createAudioResource(await ytldDiscord(this.songs[0].videoDetails.video_url, { filter: 'audioonly' }), { inputType: StreamType.Opus, inlineVolume: true });
         this.audioplayer?.play(this.audioresource);
         if(!this.audioplayer) {
             return;
