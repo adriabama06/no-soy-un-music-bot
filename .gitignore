@@ -1,6 +1,5 @@
-# Ignore CONFIG.JSON.dev duranting dev
-config.json.dev
-src/config.ts
+# Ignore dev or inesesary
+src/config.ts.dev
 lib/*
 .vscode
 

@@ -10,6 +10,33 @@ export function isLanguageType(object: string): object is LanguageType {
     return object === 'es' || object === 'en';
 }
 
+export interface ConfigInterface {
+    discord: {
+        token: string
+    },
+    youtube: {
+        token: string
+    },
+    mysql: {
+        username: string,
+        password: string,
+        host: string,
+        database: string
+        tables: {
+            prefix: string,
+            safesearch: string,
+            queues: string
+            info: string
+        },
+        maxQueueSize: number // Max size of the queue is 535 at mysql
+    },
+    default: {
+        prefix: string,
+        safesearch: '0' | '1' | '2',
+        language: LanguageType
+    }
+}
+
 export interface MysqlServerInterface {
     prefix: {id: string, prefix: string, user: string},
     safesearch: {id: string, safesearch: string, user: string},

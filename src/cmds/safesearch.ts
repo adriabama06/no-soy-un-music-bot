@@ -7,18 +7,19 @@ type options = 'set' | 'reset';
 function checkOptions(object: string): object is options {
     return ['set', 'reset'].includes(object);
 }
-type levelsByName = 'low' | 'medium' | 'max';
+type levelsByName = 'none' | 'moderate' | 'strict';
+var ableLevels: levelsByName[] = ['none', 'moderate', 'strict'];
 function checkLevels(object: string): object is levelsByName {
-    return ['low', 'medium', 'max'].includes(object);
+    return ['none', 'moderate', 'strict'].includes(object);
 }
 type levelsByLevel = '0' | '1' | '2';
 function getByName(name: levelsByName | string): levelsByLevel {
     switch (name) {
-        case 'low':
+        case 'none':
             return '0';
-        case 'medium':
+        case 'moderate':
             return '1';
-        case 'max':
+        case 'strict':
             return '2';
         default:
             return config.default.safesearch;
@@ -27,11 +28,11 @@ function getByName(name: levelsByName | string): levelsByLevel {
 function getByLevel(level: levelsByLevel | string): levelsByName {
     switch (level) {
         case '0':
-            return 'low';
+            return 'none';
         case '1':
-            return 'medium';
+            return 'moderate';
         case '2':
-            return 'max';
+            return 'strict';
         default:
             return getByLevel(config.default.safesearch);
     }
@@ -65,9 +66,9 @@ const command: CommandInterface = {
                 required: false,
                 description: 'Nivel para poner',
                 choices: [
-                    {name: 'Bajo', value: 'low'},
-                    {name: 'Medio', value: 'medium'},
-                    {name: 'Maximo', value: 'max'}
+                    {name: 'Ninguno', value: 'none'},
+                    {name: 'Moderado', value: 'moderate'},
+                    {name: 'Estricto', value: 'strict'}
                 ]
             }
         ],
@@ -88,9 +89,9 @@ const command: CommandInterface = {
                 required: false,
                 description: 'Level to set',
                 choices: [
-                    {name: 'Low', value: 'low'},
-                    {name: 'Medium', value: 'medium'},
-                    {name: 'Max', value: 'max'}
+                    {name: 'None', value: 'none'},
+                    {name: 'Moderate', value: 'moderate'},
+                    {name: 'Strict', value: 'strict'}
                 ]
             }
         ]
@@ -124,7 +125,6 @@ const command: CommandInterface = {
             case 'set':
                 var level = interaction.options.getString('level');
                 if(!level || (typeof level == 'string' && !checkLevels(level))) {
-                    var ableLevels: levelsByName[] = ['low', 'medium', 'max'];
                     const embed = new MessageEmbed();
                     if(server.info.language === 'es') {
                         embed.setTitle(`Ponga un nivel: \`${ableLevels.join(', ')}\``);
