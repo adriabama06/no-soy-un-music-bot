@@ -49,7 +49,7 @@ client.on('ready', async () => {
                     description: 'languages to set',
                     choices: [
                         {name: 'Carga los comandos en Español', value: 'es'},
-                        {name: 'load the commands in English', value: 'en'}
+                        {name: 'Load the commands in English', value: 'en'}
                     ]
                 }
             ]
@@ -109,7 +109,13 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         });
         var toset: ApplicationCommandData[] = [];
         for(const Command of Commands) {
-            var description: string = "Descripcion no puesta";
+            var description: string = "Undefined: description";
+            if(languageSelected == 'es') {
+                var description: string = "Descripcion no puesta";
+            }
+            if(languageSelected == 'en') {
+                var description: string = "Description not set";
+            }
             var opts: ApplicationCommandOptionData[] = [];
             if(Command[1].params) {
                 var params = Command[1].params[languageSelected];
@@ -130,7 +136,13 @@ client.on('interactionCreate', async (interaction: Interaction) => {
             });
         }
         for(const Command of Alias) {
-            var description: string = "Descripcion no puesta";
+            var description: string = "Undefined: description";;
+            if(languageSelected == 'es') {
+                var description: string = "Descripcion no puesta";
+            }
+            if(languageSelected == 'en') {
+                var description: string = "Description not set";
+            }
             var opts: ApplicationCommandOptionData[] = [];
             if(Command[1].params) {
                 var params = Command[1].params[languageSelected];
