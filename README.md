@@ -5,26 +5,16 @@ Bot de musica que he creado con el codigo publico para que mas gente pueda desca
 Si quieres probar el bot, puedes invitarlo aqui:
 [no soy un "MusicBot"](https://discord.com/api/oauth2/authorize?client_id=767017761725087774&permissions=415067598640&scope=bot%20applications.commands)
 
-Ejecutar tras descargar para instalar los npm:
+Ejecutar tras descargar para instalar los npm, este automaticamente compilara TypeScript:
 ```cmd
 # En la carpeta
 npm i --save
 ```
-o (recomendado)
+### Como ejecutar?
 ```cmd
-# En la carpeta
-node setup\setup.js # Para windows
-node setup/setup.js # Para linux
-```
-
-## Desarollo:
-Como ejecutar?
-```cmd
-# TypeScript (Desarollo)
-npm run build && node .
-
-# JavaScript Version Funcional
-node index.js
+npm start
+# o tambien
+node .
 ```
 
 ## Importante:
@@ -36,8 +26,9 @@ Es importante crear la base de datos, tienes en ./setup un .sql para phpmyadmin 
 - [x] Preparar todo sobre los prefix y conecciones con la base de datos
 - [x] Poner comandos de musica: `play - stop - queue - pause - resume - safesearch`
 - [x] Guardar informacion de cuando el bot ha sido invitado y guardar queues
-- [ ] (En proseso) Actualizar todo a TypeScript
-- [ ] añadir quik.db para que no sea nececario usar una base de datos [mysql](https://github.com/mysqljs/mysql)
+- [x] Actualizar todo a TypeScript
+- [ ] (En proseso) Modificar el sistema de manejo de datos
+- [ ] (En proseso) añadir quik.db para que no sea nececario usar una base de datos [mysql](https://github.com/mysqljs/mysql)
 - [ ] Crear una DashBoard
 - [ ] Podeis añadir cosas que me haya dejado o cosas que puedo añadir en https://github.com/adriabama06/no-soy-un-music-bot/issues/new
 - [ ] Ya ire añadiendo objetivos
