@@ -128,7 +128,7 @@ const command: CommandInterface = {
             menu.push(toadd);
         }
         const embed = new MessageEmbed();
-        embed.setTitle(`${music.songs.length > size ? '1 - ' : ''}**queue** : **${interaction.guild.name}**`);
+        embed.setTitle(`${music.songs.length > size ? '1 - ' : ''}**Queue** : **${interaction.guild.name}**`);
         if(server.info.language == 'es') {
             embed.setDescription(`${menu.length === 0 ? 'no hay ninguna cancion' : menu[0]}`);
         }
@@ -185,14 +185,14 @@ const command: CommandInterface = {
             if(i.customId === 'back') {
                 if(index === 0 || index < 0) {
                     index = menu.length-1;
-                    embed.setTitle(`${index+1} - **queue** : **${guildname}**`);
+                    embed.setTitle(`${index+1} - **Queue** : **${guildname}**`);
                     embed.setDescription(menu[index]);
                     await msg.edit({
                         embeds: [embed]
                     });
                 } else {
                     index--;
-                    embed.setTitle(`${index+1} - **queue** : **${guildname}**`);
+                    embed.setTitle(`${index+1} - **Queue** : **${guildname}**`);
                     embed.setDescription(menu[index]);
                     await msg.edit({
                         embeds: [embed]
@@ -201,14 +201,14 @@ const command: CommandInterface = {
             } else if(i.customId === 'next') {
                 if(index === menu.length-1 || index > menu.length-1) {
                     index = 0;
-                    embed.setTitle(`${index+1} - **queue** : **${guildname}**`);
+                    embed.setTitle(`${index+1} - **Queue** : **${guildname}**`);
                     embed.setDescription(menu[index]);
                     await msg.edit({
                         embeds: [embed]
                     });
                 } else {
                     index++;
-                    embed.setTitle(`${index+1} - **queue** : **${guildname}**`);
+                    embed.setTitle(`${index+1} - **Queue** : **${guildname}**`);
                     embed.setDescription(menu[index]);
                     await msg.edit({
                         embeds: [embed]

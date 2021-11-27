@@ -1,4 +1,4 @@
-import { ConfigInterface, LanguageType } from './interfaces';
+import { ConfigInterface } from './interfaces';
 
 var config: ConfigInterface = {
     discord: {
