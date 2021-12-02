@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionData, Client, CommandInteraction } from 'discord.js';
 import { videoInfo } from 'ytdl-core';
+import { MySql } from './database';
 
 import { MysqlIntermediator } from './mysql';
 import { ServerManager } from './servers';
@@ -83,4 +84,28 @@ export interface CommandInterface {
     } | undefined,
     alias: string[] | undefined,
     run: (CommandRun: CommandRunInterface) => Promise<boolean | void> | void
+}
+
+export interface DataBaseInterface {
+    safesearch: {
+        id: string,
+        safesearch: string,
+        user: string
+    },
+    queues: {
+        id: string,
+        queue: videoInfo[] | string,
+        user: string
+    },
+    info: {
+        id: string,
+        language: LanguageType,
+        user: string
+    }
+}
+
+export interface DataBaseCheckInterface<Manager> {
+    SyncInterval: number,
+    IntervalCallBack?: (DataBaseMannager: Manager) => void,
+    override?: boolean
 }
