@@ -5,6 +5,11 @@ Bot de musica que he creado con el codigo publico para que mas gente pueda desca
 Si quieres probar el bot, puedes invitarlo aqui:
 [no soy un "MusicBot"](https://discord.com/api/oauth2/authorize?client_id=767017761725087774&permissions=415067598640&scope=bot%20applications.commands)
 
+### Descargar:
+[no-soy-un-music-bot.zip](https://github.com/adriabama06/no-soy-un-music-bot/releases/download/v0.0.6/no-soy-un-music-bot.zip) - Para descargar en Windows y poder descomprimir facilmente sin programas externos
+[no-soy-un-music-bot.tar](https://github.com/adriabama06/no-soy-un-music-bot/releases/download/v0.0.6/no-soy-un-music-bot.tar) - Para descomprimir en Linux si prefiere
+[no-soy-un-music-bot.7z](https://github.com/adriabama06/no-soy-un-music-bot/releases/download/v0.0.6/no-soy-un-music-bot.7z) - Por si lo quieres en 7zip
+
 Ejecutar tras descargar para instalar los npm, este automaticamente compilara TypeScript:
 ```cmd
 # En la carpeta
