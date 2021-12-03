@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionData, Client, CommandInteraction } from 'discord.js';
 import { videoInfo } from 'ytdl-core';
-import { MySql } from './database';
+import { MySql, Servers } from './database';
 
 import { MysqlIntermediator } from './mysql';
 import { ServerManager } from './servers';
@@ -106,6 +106,6 @@ export interface DataBaseInterface {
 
 export interface DataBaseCheckInterface<Manager> {
     SyncInterval: number,
-    IntervalCallBack?: (DataBaseMannager: Manager) => void,
+    IntervalCallBack?: (Servers: Servers) => void,
     override?: boolean
 }

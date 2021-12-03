@@ -8,31 +8,25 @@ import config from './config';
 import { ParseQueue } from './util'
 import { ClientConfigInterface, DataBaseCheckInterface, DataBaseInterface } from "./interfaces";
 
-type Servers = Map<string, DataBaseInterface>;
+export type Servers = Map<string, DataBaseInterface>;
 
-export class MySql {
+class DataBase<DataBaseType> {
     protected servers: Servers = new Map();
-    protected connection: mysql.Connection;
-    protected MysqlConfig: mysql.ConnectionConfig;
-    protected Check: DataBaseCheckInterface<MySql>;
+    protected Check: DataBaseCheckInterface<DataBaseType>;
     protected CheckInterval: NodeJS.Timer;
-    constructor(MysqlConfig: mysql.ConnectionConfig, Check: DataBaseCheckInterface<MySql>) {
-        this.connection = mysql.createConnection(MysqlConfig);
-        this.connection.connect();
-
-        this.MysqlConfig = MysqlConfig;
+    constructor(Check: DataBaseCheckInterface<DataBaseType>) {
         this.Check = Check;
 
-        this.MysqlSync();
+        this.Sync();
 
         this.CheckInterval = setInterval(() => {
             if(Check.IntervalCallBack != undefined) {
-                Check.IntervalCallBack(this);
+                Check.IntervalCallBack(this.servers);
                 if(Check.override) {
                     return;
                 }
             }
-            this.MysqlSync(true);
+            this.Sync(true);
         }, Check.SyncInterval);
     }
     public has(id: string): boolean {
@@ -45,7 +39,22 @@ export class MySql {
         }
         return undefined;
     }
-    public async MysqlSync(reload?: boolean): Promise<void> {
+    protected async Sync(reload?: boolean): Promise<void> {};
+}
+
+export class MySql extends DataBase<MySql> {
+    protected connection: mysql.Connection;
+    protected Config: mysql.ConnectionConfig;
+    constructor(Config: mysql.ConnectionConfig, Check: DataBaseCheckInterface<MySql>) {
+        var c = mysql.createConnection(Config);
+        c.connect();
+        super(Check);
+
+        this.connection = c;
+
+        this.Config = Config;
+    }
+    protected async Sync(reload?: boolean): Promise<void> {
         const info = await this.query(`SELECT * FROM ${config.mysql.tables.info}`);
         if(typeof info === 'string' && (info === 'no servers found' || info === 'error')) {
             return;
@@ -83,4 +92,8 @@ export class MySql {
             });
         });
     }
+}
+
+export class QuickDB extends DataBase<QuickDB> {
+    
 }
