@@ -17,8 +17,6 @@ class DataBase<DataBaseType> {
     constructor(Check: DataBaseCheckInterface<DataBaseType>) {
         this.Check = Check;
 
-        this.Sync();
-
         this.CheckInterval = setInterval(() => {
             if(Check.IntervalCallBack != undefined) {
                 Check.IntervalCallBack(this.servers);
@@ -46,24 +44,29 @@ export class MySql extends DataBase<MySql> {
     protected connection: mysql.Connection;
     protected Config: mysql.ConnectionConfig;
     constructor(Config: mysql.ConnectionConfig, Check: DataBaseCheckInterface<MySql>) {
-        var c = mysql.createConnection(Config);
-        c.connect();
         super(Check);
 
-        this.connection = c;
+        this.connection = mysql.createConnection(Config);
+        this.connection.connect();
+
+        this.Sync();
 
         this.Config = Config;
     }
     protected async Sync(reload?: boolean): Promise<void> {
-        const info = await this.query(`SELECT * FROM ${config.mysql.tables.info}`);
+        const info = await this.SqlSelect(config.mysql.tables.info);
         if(typeof info === 'string' && (info === 'no servers found' || info === 'error')) {
             return;
         }
-        const safesearch = await this.query(`SELECT * FROM ${config.mysql.tables.safesearch}`);
-        const queues = await this.query(`SELECT * FROM ${config.mysql.tables.queues}`);
+        const safesearch = await this.SqlSelect(config.mysql.tables.safesearch);
+        const queues = await this.SqlSelect(config.mysql.tables.queues);
         const servers: any[] = [];
         for(var i = 0; i < info.length; i++) {
-            servers.push({safesearch: safesearch[i], queues: queues[i], info: info[i]});
+            servers.push({
+                safesearch: safesearch[i],
+                queues: queues[i],
+                info: info[i]
+            });
         }
         if(reload) {
             this.servers.clear();
@@ -74,6 +77,12 @@ export class MySql extends DataBase<MySql> {
             this.servers.set(info[i].id, servers[i]);
         }
         return;
+    }
+    protected SqlSelect(table: string) {
+        return this.query(`SELECT * FROM ${table};`);
+    }
+    protected SqlInsert(table: string, options: string, data: string) {
+        return this.query(`INSERT INTO ${table} (${options}) VALUES (${data});`);
     }
     protected async query(sql: string): Promise<any[] | 'error' | 'no servers found'> {
         return new Promise(async (resolve) => {
