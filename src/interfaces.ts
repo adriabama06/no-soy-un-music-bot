@@ -86,22 +86,26 @@ export interface CommandInterface {
     run: (CommandRun: CommandRunInterface) => Promise<boolean | void> | void
 }
 
+export interface SafeSearch {
+    id: string,
+    safesearch: string,
+    user: string
+}
+export interface Queues {
+    id: string,
+    queue: videoInfo[] | string[] | string,
+    user: string
+}
+export interface Info {
+    id: string,
+    language: LanguageType,
+    user: string
+}
+
 export interface DataBaseInterface {
-    safesearch: {
-        id: string,
-        safesearch: string,
-        user: string
-    },
-    queues: {
-        id: string,
-        queue: videoInfo[] | string,
-        user: string
-    },
-    info: {
-        id: string,
-        language: LanguageType,
-        user: string
-    }
+    safesearch: SafeSearch,
+    queues: Queues,
+    info: Info
 }
 
 export interface DataBaseCheckInterface<Manager> {
