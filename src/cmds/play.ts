@@ -1,7 +1,7 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
 import { getInfo, validateURL, videoInfo } from 'ytdl-core';
 
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import search from '../search';
 import { messageDelete } from '../util';
 
@@ -34,7 +34,7 @@ const command: CommandInterface = {
         ]
     },
     alias: ["pon"],
-    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer, music}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -43,10 +43,10 @@ const command: CommandInterface = {
         }
         if(!interaction.member.voice.channel) {
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setDescription(`Nececitas estar en un canal, evita molestar a los demas`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setDescription(`I can't see you in a voice channel, avoid disturbing others`);
             }
             embed.setTimestamp();
@@ -64,17 +64,17 @@ const command: CommandInterface = {
                 v = await getInfo(video);
             }
             if(!v) {
-                const r = await search(video, server.safesearch.safesearch);
+                const r = await search(video, DataBaseServer.safesearch.safesearch);
                 if(r) {
                     v = await getInfo(r);
                 }
             }
             if(!v) {
                 const embed = new MessageEmbed();
-                if(server.info.language === 'es') {
+                if(DataBaseServer.info.language === 'es') {
                     embed.setDescription(`No se pudo encontrar el video, verifique si el url o el titulo es correcto`);
                 }
-                if(server.info.language === 'en') {
+                if(DataBaseServer.info.language === 'en') {
                     // I'm not going to add all in english now
                 }
                 embed.setTimestamp();
@@ -86,7 +86,7 @@ const command: CommandInterface = {
             } else {
                 music.songs.push(v);
                 const embed = new MessageEmbed();
-                if(server.info.language === 'es') {
+                if(DataBaseServer.info.language === 'es') {
                     embed.setDescription(`Se añadio [${v.videoDetails.title}](${v.videoDetails.video_url}) a la queue`);
                 }
                 embed.setTimestamp();

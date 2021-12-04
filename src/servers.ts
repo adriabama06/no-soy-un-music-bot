@@ -18,7 +18,7 @@ import {
 import { MessageEmbed, StageChannel, TextBasedChannels, VoiceChannel } from 'discord.js';
 import ytdl, { videoInfo } from 'ytdl-core';
 import ytldDiscord from 'ytdl-core-discord';
-import { MysqlServerInterface, ServerManagerOptionsInterface } from './interfaces';
+import { DataBaseInterface, ServerManagerOptionsInterface } from './interfaces';
 import { messageDelete } from './util';
 
 export class ServerManager {
@@ -28,7 +28,7 @@ export class ServerManager {
     public audioplayer: AudioPlayer | undefined; // Protected becuase is not neccesary acces out there
     public audioresource: AudioResource<unknown> | undefined; // Protected becuase is not neccesary acces out there
     public channel: TextBasedChannels | undefined;
-    public server: MysqlServerInterface | undefined;
+    public server: DataBaseInterface | undefined;
     public options: ServerManagerOptionsInterface = {
         volume: 100,
         loop: false,
@@ -164,7 +164,7 @@ export class ServerManager {
         this.channel = channel;
         return;
     }
-    public setServer(server: MysqlServerInterface): void {
+    public setServer(server: DataBaseInterface): void {
         this.server = server;
         return;
     }

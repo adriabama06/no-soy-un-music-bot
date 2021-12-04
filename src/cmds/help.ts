@@ -1,5 +1,5 @@
 import { GuildMember, MessageActionRow, MessageButton, MessageEmbed } from 'discord.js';
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
@@ -14,7 +14,7 @@ const command: CommandInterface = {
     },
     params: undefined,
     alias: ["ayuda"],
-    run: async ({interaction, server, Commands}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer, Commands}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -31,7 +31,7 @@ const command: CommandInterface = {
             var pref_bdesc: string = "";
             var bdesc: string = "";
             if(command[1].info) {
-                var bd = command[1].info[server.info.language];
+                var bd = command[1].info[DataBaseServer.info.language];
                 if(bd) {
                     bdesc = bd;
                 }
@@ -40,7 +40,7 @@ const command: CommandInterface = {
             var pref_ldesc: string = "";
             var ldesc: string = "";
             if(command[1].longinfo) {
-                var ld = command[1].longinfo[server.info.language];
+                var ld = command[1].longinfo[DataBaseServer.info.language];
                 if(ld) {
                     ldesc = ld;
                 }
@@ -51,7 +51,7 @@ const command: CommandInterface = {
             if(command[1].alias) {
                 alias = command[1].alias.join(' | ');
             }
-            if(server.info.language == 'es') {
+            if(DataBaseServer.info.language == 'es') {
                 pref_bdesc = 'Descripcion basica';
                 pref_ldesc = 'Descripcion completa';
                 pref_alias = 'Alias';
@@ -68,7 +68,7 @@ const command: CommandInterface = {
                     ldesc = 'Descripcion completa no puesta';
                 } 
             }
-            if(server.info.language == 'en') {
+            if(DataBaseServer.info.language == 'en') {
                 pref_bdesc = 'Basic description';
                 pref_ldesc = 'Full description';
                 pref_alias = 'Alias';
@@ -112,10 +112,10 @@ const command: CommandInterface = {
         const embed = new MessageEmbed();
         embed.setTimestamp();
         embed.setColor('RANDOM');
-        if(server.info.language == 'es') {
+        if(DataBaseServer.info.language == 'es') {
             embed.setTitle('**Ayuda pagina**: 1');
         }
-        if(server.info.language == 'en') {
+        if(DataBaseServer.info.language == 'en') {
             embed.setTitle('**Help page**: 1');
         }
         embed.setDescription(menu[0]);
@@ -164,10 +164,10 @@ const command: CommandInterface = {
             if(i.customId === 'back') {
                 if(index === 0 || index < 0) {
                     index = menu.length-1;
-                    if(server.info.language == 'es') {
+                    if(DataBaseServer.info.language == 'es') {
                         embed.setTitle(`**Ayuda pagina**: ${index+1}`);
                     }
-                    if(server.info.language == 'en') {
+                    if(DataBaseServer.info.language == 'en') {
                         embed.setTitle(`**Help page**: ${index+1}`);
                     }
                     embed.setDescription(menu[index]);
@@ -176,10 +176,10 @@ const command: CommandInterface = {
                     });
                 } else {
                     index--;
-                    if(server.info.language == 'es') {
+                    if(DataBaseServer.info.language == 'es') {
                         embed.setTitle(`**Ayuda pagina**: ${index+1}`);
                     }
-                    if(server.info.language == 'en') {
+                    if(DataBaseServer.info.language == 'en') {
                         embed.setTitle(`**Help page**: ${index+1}`);
                     }
                     embed.setDescription(menu[index]);
@@ -190,10 +190,10 @@ const command: CommandInterface = {
             } else if(i.customId === 'next') {
                 if(index === menu.length-1 || index > menu.length-1) {
                     index = 0;
-                    if(server.info.language == 'es') {
+                    if(DataBaseServer.info.language == 'es') {
                         embed.setTitle(`**Ayuda pagina**: ${index+1}`);
                     }
-                    if(server.info.language == 'en') {
+                    if(DataBaseServer.info.language == 'en') {
                         embed.setTitle(`**Help page**: ${index+1}`);
                     }
                     embed.setDescription(menu[index]);
@@ -202,10 +202,10 @@ const command: CommandInterface = {
                     });
                 } else {
                     index++;
-                    if(server.info.language == 'es') {
+                    if(DataBaseServer.info.language == 'es') {
                         embed.setTitle(`**Ayuda pagina**: ${index+1}`);
                     }
-                    if(server.info.language == 'en') {
+                    if(DataBaseServer.info.language == 'en') {
                         embed.setTitle(`**Help page**: ${index+1}`);
                     }
                     embed.setDescription(menu[index]);

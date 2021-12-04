@@ -1,5 +1,5 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
@@ -14,7 +14,7 @@ const command: CommandInterface = {
     },
     params: undefined,
     alias: ['repeticion'],
-    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer, music}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -23,10 +23,10 @@ const command: CommandInterface = {
         }
         if(!interaction.member.voice.channel) {
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setDescription(`Nececitas estar en un canal, evita molestar a los demas`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setDescription(`I can't see you in a voice channel, avoid disturbing others`);
             }
             embed.setTimestamp();
@@ -42,19 +42,19 @@ const command: CommandInterface = {
         embed.setColor("RANDOM");
         if(music.options.loop === false) {
             music.options.loop = true;
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setTitle(`Se habilito el modo repeticion`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setTitle(`Loop mode was enabled`);
             }
             
         } else {
             music.options.loop = false;
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setTitle(`Se deshabilito el modo repeticion`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setTitle(`Loop mode was disabled`);
             }
         }

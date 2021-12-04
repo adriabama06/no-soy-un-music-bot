@@ -5,15 +5,15 @@ import mysql from 'mysql';
 
 import config from './config';
 import { ParseQueue } from './util'
-import { DataBaseCheckInterface, DataBaseInterface, Info, Queues, SafeSearch } from "./interfaces";
+import { DataBaseCheckInterface, DataBaseInterface, Info, MysqlTables, Queues, SafeSearch } from "./interfaces";
 
 export type Servers = Map<string, DataBaseInterface>;
 
-export class DataBase<DataBaseType> {
+export class DataBase {
     protected servers: Servers = new Map();
-    protected Check: DataBaseCheckInterface<DataBaseType>;
+    protected Check: DataBaseCheckInterface;
     protected CheckInterval: NodeJS.Timer;
-    constructor(Check: DataBaseCheckInterface<DataBaseType>) {
+    constructor(Check: DataBaseCheckInterface) {
         this.Check = Check;
 
         this.CheckInterval = setInterval(() => {
@@ -44,11 +44,16 @@ export class DataBase<DataBaseType> {
     protected async Sync(reload?: boolean): Promise<void> {};
 }
 
-export class MySql extends DataBase<MySql> {
+export class MySql extends DataBase {
     protected connection: mysql.Connection;
     protected Config: mysql.ConnectionConfig;
-    constructor(Config: mysql.ConnectionConfig, Check: DataBaseCheckInterface<MySql>) {
+    protected Tables: MysqlTables;
+    public maxQueueSize: number;
+    constructor(Config: mysql.ConnectionConfig & {tables: MysqlTables, maxQueueSize: number}, Check: DataBaseCheckInterface) {
         super(Check);
+
+        this.maxQueueSize = Config.maxQueueSize;
+        this.Tables = Config.tables;
 
         this.connection = mysql.createConnection(Config);
         this.connection.connect();
@@ -62,7 +67,7 @@ export class MySql extends DataBase<MySql> {
         if(!server) {
             return false;
         }
-        var status = await this.SqlUpdate(config.mysql.tables.info, `\`language\` = '${data.language}', \`user\` = '${data.user}'`, `\`id\` = '${data.id}'`);
+        var status = await this.SqlUpdate(this.Tables.info, `\`language\` = '${data.language}', \`user\` = '${data.user}'`, `\`id\` = '${data.id}'`);
         if(status == undefined) {
             return false;
         }
@@ -74,7 +79,7 @@ export class MySql extends DataBase<MySql> {
         if(!server) {
             return false;
         }
-        var status = await this.SqlUpdate(config.mysql.tables.queues, `\`queue\` = '${JSON.stringify(data.queue)}', \`user\` = '${data.user}'`, `\`id\` = '${data.id}'`);
+        var status = await this.SqlUpdate(this.Tables.queues, `\`queue\` = '${data.queue}', \`user\` = '${data.user}'`, `\`id\` = '${data.id}'`);
         if(status == undefined) {
             return false;
         }
@@ -86,7 +91,7 @@ export class MySql extends DataBase<MySql> {
         if(!server) {
             return false;
         }
-        var status = await this.SqlUpdate(config.mysql.tables.safesearch, `\`safesearch\` = '${data.safesearch}', \`user\` = '${data.user}'`, `\`id\` = '${data.id}'`);
+        var status = await this.SqlUpdate(this.Tables.safesearch, `\`safesearch\` = '${data.safesearch}', \`user\` = '${data.user}'`, `\`id\` = '${data.id}'`);
         if(status == undefined) {
             return false;
         }
@@ -97,15 +102,15 @@ export class MySql extends DataBase<MySql> {
         if(this.has(id)) {
             return false;
         }
-        var info = await this.SqlInsert(config.mysql.tables.info, '`id`, `language`, `user`', `'${id}', '${config.default.language}', '${user}'`);
+        var info = await this.SqlInsert(this.Tables.info, '`id`, `language`, `user`', `'${id}', '${config.default.language}', '${user}'`);
         if(info == undefined) {
             return false;
         }
-        var queues = await this.SqlInsert(config.mysql.tables.queues, '`id`, `queue`, `user`', `'${id}', '${JSON.stringify([])}', '${user}'`);
+        var queues = await this.SqlInsert(this.Tables.queues, '`id`, `queue`, `user`', `'${id}', '${JSON.stringify([])}', '${user}'`);
         if(queues == undefined) {
             return false;
         }
-        var safesearch = await this.SqlInsert(config.mysql.tables.safesearch, '`id`, `safesearch`, `user`', `'${id}', '${config.default.safesearch}', '${user}'`);
+        var safesearch = await this.SqlInsert(this.Tables.safesearch, '`id`, `safesearch`, `user`', `'${id}', '${config.default.safesearch}', '${user}'`);
         if(safesearch == undefined) {
             return false;
         }
@@ -132,15 +137,15 @@ export class MySql extends DataBase<MySql> {
         if(!this.has(id)) {
             return false;
         }
-        var info = await this.SqlDelete(config.mysql.tables.info, `\`id\` = '${id}'`);
+        var info = await this.SqlDelete(this.Tables.info, `\`id\` = '${id}'`);
         if(info == undefined) {
             return false;
         }
-        var queues = await this.SqlDelete(config.mysql.tables.queues, `\`id\` = '${id}'`);
+        var queues = await this.SqlDelete(this.Tables.queues, `\`id\` = '${id}'`);
         if(queues == undefined) {
             return false;
         }
-        var safesearch = await this.SqlDelete(config.mysql.tables.safesearch, `\`id\` = '${id}'`);
+        var safesearch = await this.SqlDelete(this.Tables.safesearch, `\`id\` = '${id}'`);
         if(safesearch == undefined) {
             return false;
         }
@@ -148,15 +153,15 @@ export class MySql extends DataBase<MySql> {
         return true;
     }
     protected async Sync(reload?: boolean): Promise<void> {
-        const info = await this.SqlSelect(config.mysql.tables.info);
+        const info = await this.SqlSelect(this.Tables.info);
         if(!info) {
             return;
         }
-        const safesearch = await this.SqlSelect(config.mysql.tables.safesearch);
+        const safesearch = await this.SqlSelect(this.Tables.safesearch);
         if(!safesearch) {
             return;
         }
-        const queues = await this.SqlSelect(config.mysql.tables.queues);
+        const queues = await this.SqlSelect(this.Tables.queues);
         if(!queues) {
             return;
         }
@@ -209,6 +214,6 @@ export class MySql extends DataBase<MySql> {
     }
 }
 
-export class QuickDB extends DataBase<QuickDB> {
+export class QuickDB extends DataBase {
     
 }

@@ -1,5 +1,6 @@
 import { Message, MessageActionRow, MessageButton } from 'discord.js';
 import ytdl, { videoInfo } from 'ytdl-core';
+import config from './config';
 
 export async function messageDelete(message: Message, userid?: string, timeout: number = 240000): Promise<boolean> {
     return new Promise(async (resolve) => {
@@ -49,7 +50,11 @@ export async function ParseQueue(queue: string): Promise<videoInfo[]> {
     }
     return toreturn;
 }
-export async function UnParseQueue(songs: ytdl.videoInfo[], maxStrLen: number): Promise<string[]> {
+export async function UnParseQueue(songs: ytdl.videoInfo[]): Promise<string[]> {
+    var maxStrLen: number = 535;
+    if(config.mysql) {
+        maxStrLen = config.mysql.maxQueueSize;
+    }
     var parsed: string[] = [];
     for(var i = 0; i < songs.length; i++) {
         parsed.push(songs[i].videoDetails.videoId);

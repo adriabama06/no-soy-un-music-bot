@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "start": "tsc && node .",
-    "install": "mkdir lib && tsc",
-    "build": "mkdir lib && tsc",
+    "install": "mkdir lib",
+    "build": "tsc",
     "dev": "del lib\\* /Q /S /F && npm start"
   },
   "repository": {

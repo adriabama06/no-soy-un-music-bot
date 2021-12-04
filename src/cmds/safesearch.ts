@@ -1,6 +1,6 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
 import config from '../config';
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 type options = 'set' | 'reset';
@@ -97,7 +97,7 @@ const command: CommandInterface = {
         ]
     },
     alias: undefined,
-    run: async ({interaction, server, Mysql}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer, DataBase}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -107,11 +107,11 @@ const command: CommandInterface = {
         var opt = interaction.options.getString('option');
         if(!opt || (typeof opt == 'string' && !checkOptions(opt))) {
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
-                embed.setTitle(`El nivel de safesarch esta en: \`${getByLevel(server.safesearch.safesearch)}\``);
+            if(DataBaseServer.info.language === 'es') {
+                embed.setTitle(`El nivel de safesarch esta en: \`${getByLevel(DataBaseServer.safesearch.safesearch)}\``);
             }
-            if(server.info.language === 'en') {
-                embed.setTitle(`Safesearch level is: \`${getByLevel(server.safesearch.safesearch)}\``);
+            if(DataBaseServer.info.language === 'en') {
+                embed.setTitle(`Safesearch level is: \`${getByLevel(DataBaseServer.safesearch.safesearch)}\``);
             }
             embed.setTimestamp();
             embed.setColor("RANDOM");
@@ -126,10 +126,10 @@ const command: CommandInterface = {
                 var level = interaction.options.getString('level');
                 if(!level || (typeof level == 'string' && !checkLevels(level))) {
                     const embed = new MessageEmbed();
-                    if(server.info.language === 'es') {
+                    if(DataBaseServer.info.language === 'es') {
                         embed.setTitle(`Ponga un nivel: \`${ableLevels.join(', ')}\``);
                     }
-                    if(server.info.language === 'en') {
+                    if(DataBaseServer.info.language === 'en') {
                         embed.setTitle(`Set an level: \`${ableLevels.join(', ')}\``);
                     }
                     embed.setTimestamp();
@@ -140,12 +140,16 @@ const command: CommandInterface = {
                     messageDelete(msg, interaction.member.id);
                     return;
                 }
-                Mysql.setSafeSearch(interaction.guild.id, getByName(level), interaction.member.id);
+                DataBase.setSafeSearch({
+                    id: interaction.guild.id,
+                    safesearch: getByName(level),
+                    user: interaction.member.id
+                });
                 const embed2 = new MessageEmbed();
-                if(server.info.language === 'es') {
+                if(DataBaseServer.info.language === 'es') {
                     embed2.setTitle(`Safesearch puesto a: \`${level}\``);
                 }
-                if(server.info.language === 'en') {
+                if(DataBaseServer.info.language === 'en') {
                     embed2.setTitle(`Safesearch set to: \`${level}\``);
                 }
                 embed2.setTimestamp();
@@ -157,12 +161,16 @@ const command: CommandInterface = {
                 break;
 
             case 'reset':
-                Mysql.setSafeSearch(interaction.guild.id, config.default.safesearch, interaction.member.id);
+                DataBase.setSafeSearch({
+                    id: interaction.guild.id,
+                    safesearch: config.default.safesearch,
+                    user: interaction.member.id
+                });
                 const embed3 = new MessageEmbed();
-                if(server.info.language === 'es') {
+                if(DataBaseServer.info.language === 'es') {
                     embed3.setTitle(`Safesearch resetado a: \`${getByLevel(config.default.safesearch)}\``);
                 }
-                if(server.info.language === 'en') {
+                if(DataBaseServer.info.language === 'en') {
                     embed3.setTitle(`Safesearch reset to: \`${getByLevel(config.default.safesearch)}\``);
                 }
                 embed3.setTimestamp();
@@ -175,11 +183,11 @@ const command: CommandInterface = {
 
             default:
                 const embed = new MessageEmbed();
-                if(server.info.language === 'es') {
-                    embed.setTitle(`El nivel de safesarch esta en: \`${getByLevel(server.safesearch.safesearch)}\``);
+                if(DataBaseServer.info.language === 'es') {
+                    embed.setTitle(`El nivel de safesarch esta en: \`${getByLevel(DataBaseServer.safesearch.safesearch)}\``);
                 }
-                if(server.info.language === 'en') {
-                    embed.setTitle(`Safesearch level is: \`${getByLevel(server.safesearch.safesearch)}\``);
+                if(DataBaseServer.info.language === 'en') {
+                    embed.setTitle(`Safesearch level is: \`${getByLevel(DataBaseServer.safesearch.safesearch)}\``);
                 }
                 embed.setTimestamp();
                 embed.setColor("RANDOM");

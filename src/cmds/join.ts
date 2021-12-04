@@ -1,6 +1,6 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
 
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
@@ -15,7 +15,7 @@ const command: CommandInterface = {
     },
     params: undefined,
     alias: ["entra"],
-    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer, music}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -24,10 +24,10 @@ const command: CommandInterface = {
         }
         if(!interaction.member.voice.channel) {
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setDescription(`Nececitas estar en un canal de voz para que el bot se pueda unir`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setDescription(`You need get in voice channel for the bot can be join`);
             }
             embed.setTimestamp();
@@ -40,10 +40,10 @@ const command: CommandInterface = {
         }
         if(music.connection) {
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setDescription(`Ya estoy conectado, verifica los canales, si no estoy ejecuta: \`/leave\` si no se repara avise a un staff, o ejecute \`/info\` ves al github y añade el error`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setDescription(`I'm connected, verify the channels, else execute: \`/leave\` or call to staff, or execute \`/info\` and at github add the error`);
             }
             embed.setTimestamp();
@@ -57,10 +57,10 @@ const command: CommandInterface = {
         music.createConnection(interaction.member.voice.channel);
         const embed = new MessageEmbed();
         
-        if(server.info.language === 'es') {
+        if(DataBaseServer.info.language === 'es') {
             embed.setDescription(`¡ Me acabo de conectar !`);
         }
-        if(server.info.language === 'en') {
+        if(DataBaseServer.info.language === 'en') {
             embed.setDescription(`I just join !`);
         }
         embed.setTimestamp();

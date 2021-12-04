@@ -4,24 +4,32 @@ import { CommandInterface, isLanguageType } from './interfaces';
 import config from './config';
 import { loadCommands } from './commandHandler';
 import { ServerManager } from './servers';
-import { MySql } from './database';
+import { MySql, QuickDB } from './database';
 
 
 const client: Client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
 });
 
-var DataBase: MySql = new MySql({
-    host: config.mysql.host,
-    user: config.mysql.username,
-    password: config.mysql.password,
-    database: config.mysql.database
-}, {
-    SyncInterval: 5 * 1000 * 60
-});
+var DataBase: MySql | QuickDB;
 
-var Commands: Map<string, CommandInterface<MySql>> = new Map<string, CommandInterface<MySql>>();
-var Alias: Map<string, CommandInterface<MySql>> = new Map<string, CommandInterface<MySql>>();
+if(config.database == 'mysql') {
+    if(!config.mysql) {
+        console.log('[MySql] Bad config.ts');
+        process.exit(1);
+    }
+    DataBase = new MySql(config.mysql, {
+        SyncInterval: 5 * 1000 * 60
+    });
+}
+if(config.database == 'quick.db') {
+    DataBase = new QuickDB({
+        SyncInterval: 5 * 1000 * 60
+    });
+}
+
+var Commands: Map<string, CommandInterface> = new Map<string, CommandInterface>();
+var Alias: Map<string, CommandInterface> = new Map<string, CommandInterface>();
 var Servers: Map<string, ServerManager> = new Map<string, ServerManager>();
 
 client.on('ready', async () => {
@@ -86,6 +94,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     if(!music) {
         return;
     }
+    music.setServer(DataBaseServer);
 
     if(DataBaseServer.info.user === '%false%') {
         await DataBase.setInfo({

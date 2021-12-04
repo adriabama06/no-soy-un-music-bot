@@ -1,6 +1,6 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
 
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
@@ -44,7 +44,7 @@ const command: CommandInterface = {
         ]
     },
     alias: ["cq"],
-    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer, music}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -53,10 +53,10 @@ const command: CommandInterface = {
         }
         if(!interaction.member.voice.channel) {
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setDescription(`No veo que estes en un canal de voz, evita molestar a los demas`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setDescription(`I can't see you in a voice channel, avoid disturbing others`);
             }
             embed.setTimestamp();
@@ -75,10 +75,10 @@ const command: CommandInterface = {
             to = to - from;
             music.songs.splice(from, to+1);
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setDescription(`Se borraron ${from+to+1} canciones`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setDescription(`Deleted ${from+to+1} songs`);
             }
             embed.setTimestamp();
@@ -91,10 +91,10 @@ const command: CommandInterface = {
         }
         if(from <= 0 || !music.songs[from]) {
             const embed = new MessageEmbed();
-            if(server.info.language === 'es') {
+            if(DataBaseServer.info.language === 'es') {
                 embed.setDescription(`Numero invalido`);
             }
-            if(server.info.language === 'en') {
+            if(DataBaseServer.info.language === 'en') {
                 embed.setDescription(`Invalid number`);
             }
             embed.setTimestamp();
@@ -107,10 +107,10 @@ const command: CommandInterface = {
         }
         var deleted = music.songs.splice(from, 1);
         const embed = new MessageEmbed();
-        if(server.info.language === 'es') {
+        if(DataBaseServer.info.language === 'es') {
             embed.setDescription(`Se borro: [${deleted[0].videoDetails.title}](${deleted[0].videoDetails.video_url})`);
         }
-        if(server.info.language === 'en') {
+        if(DataBaseServer.info.language === 'en') {
             embed.setDescription(`Deleted: [${deleted[0].videoDetails.title}](${deleted[0].videoDetails.video_url})`);
         }
         embed.setTimestamp();

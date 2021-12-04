@@ -1,5 +1,5 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import { messageDelete } from '../util';
 var github: string = 'https://github.com/adriabama06/no-soy-un-music-bot/';
 const command: CommandInterface = {
@@ -14,7 +14,7 @@ const command: CommandInterface = {
     },
     params: undefined,
     alias: ["bot"],
-    run: async ({interaction, server}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -26,7 +26,7 @@ const command: CommandInterface = {
         embed.setTimestamp();
         embed.setColor("RANDOM");
         embed.setThumbnail("https://avatars.githubusercontent.com/u/68083226?s=400&u=42b76105fcfa4210be4c51b8296212da8a310355&v=4");
-        if(server.info.language == 'es') {
+        if(DataBaseServer.info.language == 'es') {
             embed.setTitle(`Informacion sobre el bot`);
             embed.setDescription(`Este bot esta echo por: adriabama06
             Todos los arhcivos sobre el bot estan en github: ${github} cualquiera puede descargar y usar el bot
@@ -37,7 +37,7 @@ const command: CommandInterface = {
             - [ytdl-core](https://github.com/fent/node-ytdl-core) - Para obtener la informacion de forma rapida de un video de [YouTube](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
             - [ytdl-core-discord](https://github.com/amishshah/ytdl-core-discord) - Para tener la entrada de video en opus para evitar usar ffmpeg para que vaya más rapido \`no lo uso temporalmente por pruebas que estoy haciendo\``);
         }
-        if(server.info.language == 'en') {
+        if(DataBaseServer.info.language == 'en') {
             embed.setTitle(`Infromation about the bot`);
             embed.setDescription(`This bot was made by: adriabama06
             All files are on github: ${github} any can donwload and use the bot

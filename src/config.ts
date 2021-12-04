@@ -7,16 +7,16 @@ var config: ConfigInterface = {
     youtube: {
         token: "https://console.cloud.google.com/apis/dashboard"
     },
+    database: 'mysql',
     mysql: {
-        username: "user",
+        user: "user",
         password: "shh secret",
         host: "someip",
-        database: "music", // this is example
+        database: "music",
         tables: {
-            prefix: "prefix", // this is example
-            safesearch: "safesearch", // this is example
-            queues: "queues", // this is example
-            info: "info" // this is example
+            safesearch: "safesearch",
+            queues: "queues",
+            info: "info"
         },
         maxQueueSize: 535 // Max size of the queue is 535 at mysql
     },

@@ -1,5 +1,5 @@
 import { GuildMember, MessageEmbed } from 'discord.js';
-import { CommandInterface, CommandRunInterface } from '../interfaces';
+import { CommandInterface } from '../interfaces';
 import { messageDelete } from '../util';
 
 const command: CommandInterface = {
@@ -14,7 +14,7 @@ const command: CommandInterface = {
     },
     params: undefined,
     alias: ['slc', 'logchannel'],
-    run: async ({interaction, server, music}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction, DataBaseServer, music}): Promise<boolean | void> => {
         if(!interaction.guild || !interaction.channel || !interaction.member) { // some one know about how pass an parameter with an assegurated guild? to don't do this
             return false;
         }
@@ -23,10 +23,10 @@ const command: CommandInterface = {
         }
         music.setLogChannel(interaction.channel);
         const embed = new MessageEmbed();
-        if(server.info.language == 'es') {
+        if(DataBaseServer.info.language == 'es') {
             embed.setDescription(`Ahora cualquier cambio en la musica se notificara aqui`);
         }
-        if(server.info.language == 'en') {
+        if(DataBaseServer.info.language == 'en') {
             embed.setDescription(`Now any change in the music will be notified here`);
         }
         embed.setTimestamp();

@@ -1,4 +1,4 @@
-import { CommandInterface, CommandRunInterface } from "../interfaces";
+import { CommandInterface } from "../interfaces";
 
 const command: CommandInterface = {
     name: 'example',
@@ -29,7 +29,7 @@ const command: CommandInterface = {
         ]
     },
     alias: ["exarg1", "exarg2"],
-    run: async ({interaction}: CommandRunInterface): Promise<boolean | void> => {
+    run: async ({interaction}): Promise<boolean | void> => {
         interaction.channel?.send({ content: `hola ${interaction.options.getUser('user') ? interaction.options.getUser('user')?.avatarURL({ dynamic: true }) : ', no user set'}`});
         return true;
     }
