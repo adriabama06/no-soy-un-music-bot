@@ -1,6 +1,6 @@
 import { ApplicationCommandOptionData, Client, CommandInteraction } from 'discord.js';
 import { videoInfo } from 'ytdl-core';
-import { MySql, Servers } from './database';
+import { DataBase, Servers } from './database';
 
 import { MysqlIntermediator } from './mysql';
 import { ServerManager } from './servers';
@@ -57,18 +57,18 @@ export interface ServerManagerOptionsInterface {
     skip: boolean
 }
 
-export interface CommandRunInterface {
+export interface CommandRunInterface<DataType> {
     client: Client,
     interaction: CommandInteraction,
-    Mysql: MysqlIntermediator,
+    DataBase: DataBase<DataType>,
     Servers: Map<string, ServerManager>,
-    Commands: Map<string, CommandInterface>,
-    Alias: Map<string, CommandInterface>,
-    server: MysqlServerInterface,
+    Commands: Map<string, CommandInterface<DataType>>,
+    Alias: Map<string, CommandInterface<DataType>>,
+    DataBaseServer: DataBaseInterface,
     music: ServerManager
 }
 
-export interface CommandInterface {
+export interface CommandInterface<DataType> {
     name: string | undefined,
     info: {
         es: string | undefined,
@@ -83,7 +83,7 @@ export interface CommandInterface {
         en: ApplicationCommandOptionData[] | undefined
     } | undefined,
     alias: string[] | undefined,
-    run: (CommandRun: CommandRunInterface) => Promise<boolean | void> | void
+    run: (CommandRun: CommandRunInterface<DataType>) => Promise<boolean | void> | void
 }
 
 export interface SafeSearch {

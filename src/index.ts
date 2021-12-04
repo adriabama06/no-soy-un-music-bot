@@ -4,16 +4,14 @@ import { CommandInterface, isLanguageType } from './interfaces';
 import config from './config';
 import { loadCommands } from './commandHandler';
 import { ServerManager } from './servers';
-import { MysqlIntermediator } from './mysql';
+import { MySql } from './database';
 
 
 const client: Client = new Client({
     intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_VOICE_STATES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS]
 });
-var Commands: Map<string, CommandInterface> = new Map<string, CommandInterface>();
-var Alias: Map<string, CommandInterface> = new Map<string, CommandInterface>();
-var Servers: Map<string, ServerManager> = new Map<string, ServerManager>();
-var Mysql: MysqlIntermediator = new MysqlIntermediator({
+
+var DataBase: MySql = new MySql({
     host: config.mysql.host,
     user: config.mysql.username,
     password: config.mysql.password,
@@ -21,6 +19,10 @@ var Mysql: MysqlIntermediator = new MysqlIntermediator({
 }, {
     SyncInterval: 5 * 1000 * 60
 });
+
+var Commands: Map<string, CommandInterface<MySql>> = new Map<string, CommandInterface<MySql>>();
+var Alias: Map<string, CommandInterface<MySql>> = new Map<string, CommandInterface<MySql>>();
+var Servers: Map<string, ServerManager> = new Map<string, ServerManager>();
 
 client.on('ready', async () => {
     client.user?.setStatus('invisible');
@@ -72,12 +74,12 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     if(!Servers.has(interaction.guild?.id)) {
         Servers.set(interaction.guild.id, new ServerManager());
     }
-    if(!Mysql.has(interaction.guild.id)) {
-        await Mysql.add(interaction.guild.id, interaction.member.user.id);
+    if(!DataBase.has(interaction.guild.id)) {
+        await DataBase.add(interaction.guild.id, interaction.member.user.id);
     }
 
-    var server = Mysql.get(interaction.guild.id);
-    if(!server) {
+    var DataBaseServer = DataBase.get(interaction.guild.id);
+    if(!DataBaseServer) {
         return;
     }
     var music = Servers.get(interaction.guild.id);
@@ -85,8 +87,12 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         return;
     }
 
-    if(server.info.user === '%false%') {
-        await Mysql.setInfo(interaction.guild.id, config.default.language, interaction.member.user.id);
+    if(DataBaseServer.info.user === '%false%') {
+        await DataBase.setInfo({
+            id: interaction.guild.id,
+            language: config.default.language,
+            user: interaction.member.user.id,
+        });
     }
 
     console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) : /${interaction.commandName}`);
@@ -102,7 +108,11 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         if(!isLanguageType(languageSelected)) {
             return;
         }
-        Mysql.setInfo(interaction.guild.id, languageSelected, interaction.member.user.id);
+        await DataBase.setInfo({
+            id: interaction.guild.id,
+            language: languageSelected,
+            user: interaction.member.user.id,
+        });
         await interaction.reply({ 
             content: 'Loading commands...',
             ephemeral: false
@@ -173,12 +183,12 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     
     if(Commands.has(interaction.commandName)) {
         await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
-        await Commands.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server, music});
+        await Commands.get(interaction.commandName)?.run({client, interaction, DataBase, Commands, Alias, Servers, DataBaseServer, music});
         return;
     }
     if(Alias.has(interaction.commandName)) {
         await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
-        await Alias.get(interaction.commandName)?.run({client, interaction, Mysql, Commands, Alias, Servers, server, music});
+        await Alias.get(interaction.commandName)?.run({client, interaction, DataBase, Commands, Alias, Servers, DataBaseServer, music});
         return;
     }
 });

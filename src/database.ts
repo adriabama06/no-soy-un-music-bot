@@ -9,7 +9,7 @@ import { DataBaseCheckInterface, DataBaseInterface, Info, Queues, SafeSearch } f
 
 export type Servers = Map<string, DataBaseInterface>;
 
-class DataBase<DataBaseType> {
+export class DataBase<DataBaseType> {
     protected servers: Servers = new Map();
     protected Check: DataBaseCheckInterface<DataBaseType>;
     protected CheckInterval: NodeJS.Timer;
