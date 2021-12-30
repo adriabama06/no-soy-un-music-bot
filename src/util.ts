@@ -38,13 +38,18 @@ export async function messageDelete(message: Message, userid?: string, timeout: 
 }
 
 export function MilisecondsToTime(time: number): string {
-   return new Date(time).toISOString().substr(11, 8);
+   return new Date(time).toISOString().substring(11, 8); // .substr() despracated, changed to .substring()
+}
+
+export async function sleep(TimeInMs: number): Promise<number> {
+    return new Promise(resolve => setTimeout(() => resolve(TimeInMs), TimeInMs));
 }
 
 export async function ParseQueue(queue: string): Promise<videoInfo[]> {
     var temptransform: string[] = JSON.parse(queue);
     var toreturn: videoInfo[] = [];
     for(const song of temptransform) {
+        await sleep(250); // add delay to prevent ratelimit
         const video = await ytdl.getInfo(`https://www.youtube.com/watch?v=${song}`);
         toreturn.push(video);
     }

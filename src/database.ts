@@ -3,6 +3,8 @@
  */
 import mysql from 'mysql';
 
+import quickdb from 'quick.db';
+
 import config from './config';
 import { ParseQueue } from './util'
 import { DataBaseCheckInterface, DataBaseInterface, Info, MysqlTables, Queues, SafeSearch } from "./interfaces";
@@ -215,5 +217,100 @@ export class MySql extends DataBase {
 }
 
 export class QuickDB extends DataBase {
-    
+    constructor(Config: DataBaseCheckInterface) {
+        super(Config);
+    }
+    public async setInfo(data: Info): Promise<boolean> {
+        var server = this.servers.get(data.id);
+        if(!server) {
+            return false;
+        }
+        server.info = data;
+        quickdb.set(data.id, {
+            server
+        });
+        return true;
+    }
+    public async setQueues(data: Queues): Promise<boolean> {
+        var server = this.servers.get(data.id);
+        if(!server) {
+            return false;
+        }
+        server.queues = data;
+        quickdb.set(data.id, {
+            server
+        });
+        return true;
+    }
+    public async setSafesearch(data: SafeSearch): Promise<boolean> {
+        var server = this.servers.get(data.id);
+        if(!server) {
+            return false;
+        }
+        server.safesearch = data;
+        quickdb.set(data.id, {
+            server
+        });
+        return true;
+    }
+    public async add(id: string, user: string = '%false%'): Promise<boolean> {
+        if(this.has(id)) {
+            return false;
+        }
+        quickdb.add(id, 1);
+        quickdb.set(id, {
+            info: {
+                id: id,
+                language: config.default.language,
+                user: user
+            },
+            queues: {
+                id: id,
+                queue: [],
+                user: user
+            },
+            safesearch: {
+                id: id,
+                safesearch: config.default.safesearch,
+                user: user
+            }
+        });
+        return true;
+    }
+    public async delete(id: string): Promise<boolean> {
+        if(!this.has(id)) {
+            return false;
+        }
+        quickdb.delete(id);
+        return true;
+    }
+    protected async Sync(reload?: boolean): Promise<void> {
+        var serv: DataBaseInterface[] = [];
+        for(const {ID: id, data: server} of quickdb.all()) {
+            if(!server) {
+                continue;
+            }
+            const info = server.info;
+            const queues = server.queues;
+            const safesearch = server.safesearch;
+            serv.push({
+                safesearch,
+                queues,
+                info
+            });
+        }
+        if(reload) {
+            this.servers.clear();
+        }
+        for(var i = 0; i < serv.length; i++) {
+            var ser = serv[i];
+            var queue = ser.queues.queue;
+            if(typeof queue === 'string') {
+                queue = await ParseQueue(queue);
+            }
+            ser.queues.queue = queue;
+            this.servers.set(ser.info.id, ser);
+        }
+        return;
+    }
 }
