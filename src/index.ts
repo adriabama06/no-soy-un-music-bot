@@ -193,11 +193,25 @@ client.on('interactionCreate', async (interaction: Interaction) => {
     if(Commands.has(interaction.commandName)) {
         await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
         await Commands.get(interaction.commandName)?.run({client, interaction, DataBase, Commands, Alias, Servers, DataBaseServer, music});
+        setTimeout(() => {
+            if(interaction.guild) {
+                try {
+                    interaction.deleteReply();
+                } catch (err) { }
+            }
+        }, 2 * 60 * 1000);
         return;
     }
     if(Alias.has(interaction.commandName)) {
         await interaction.reply({ content: `\`${interaction.member.user.username} > /${interaction.commandName}\``, ephemeral: false });
         await Alias.get(interaction.commandName)?.run({client, interaction, DataBase, Commands, Alias, Servers, DataBaseServer, music});
+        setTimeout(() => {
+            if(interaction.guild) {
+                try {
+                    interaction.deleteReply();
+                } catch (err) { }
+            }
+        }, 2 * 60 * 1000);
         return;
     }
 });

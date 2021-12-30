@@ -85,7 +85,27 @@ export class ServerManager {
         if(!this.audioplayer) {
             this.createPlayer();
         }
-        this.audioresource = createAudioResource(await ytldDiscord(this.songs[0].videoDetails.video_url, { filter: 'audioonly' }), { inputType: StreamType.Opus, inlineVolume: true });
+        this.audioresource = createAudioResource(await ytldDiscord(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'lowest' /* quality lowest for fast play and minus bitrate */ }), { inputType: StreamType.Opus, inlineVolume: true });
+        this.audioresource.audioPlayer?.on('error', async (err) => {
+            console.log(err);
+            if(this.channel) {
+                var embed = new MessageEmbed();
+                embed.setTitle('Error');
+                embed.setDescription(`Unexpected error`);
+                if(this.server) {
+                    if(this.server.info.language == 'es') {
+                        embed.setDescription(`Error inesperado, se reportor el error al desarollador, si existe una cancion despues de esta en la queue, se dejara de reproducir esta y se pasara a la siguiente, disculpe las molestias`);
+                    }
+                    if(this.server.info.language == 'en') {
+                        embed.setDescription(`Unexpected error, the error has been reported to the developer, if there is a song after this in the queue, it will be skipped, sorry for the inconvenience`);
+                    }
+                }
+                embed.setColor('RANDOM');
+                await this.channel.send({ embeds: [embed] });
+            }
+            this.songs.shift();
+            this.play();
+        });
         this.audioplayer?.play(this.audioresource);
         if(!this.audioplayer) {
             return;
@@ -100,8 +120,22 @@ export class ServerManager {
             if(!this.songs[1]) {
                 if(this.channel && this.options.loop === false) {
                     const embed = new MessageEmbed();
-                    embed.setDescription(`Acaba de sonar la ultima cancion:
-                    [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
+                    if(this.server) {
+                        if(this.server.info.language == 'es') {
+                            embed.setDescription(`Acaba de sonar la ultima cancion`);
+                            if(this.songs[0]) {
+                                embed.setDescription(`Acaba de sonar la ultima cancion:
+                                [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
+                            }
+                        }
+                        if(this.server.info.language == 'en') {
+                            embed.setDescription(`The last song has just finished`);
+                            if(this.songs[0]) {
+                                embed.setDescription(`The last song has just finished:
+                                [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
+                            }
+                        }
+                    }
                     embed.setTimestamp();
                     embed.setColor("RANDOM");
                     const msg = await this.channel.send({
@@ -115,17 +149,35 @@ export class ServerManager {
                 }
             }
             const embed = new MessageEmbed();
-            if(this.options.loop === true && this.options.skip === false) {
-                embed.setDescription(`Modo repeticion activado! Volvera a sonar:
-                [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
-            } else {
-                embed.setDescription(`${this.options.skip === true ? "Skip! - " : ""}Acaba de sonar:
-                [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})
-                
-                La siguiente es:
-                [${this.songs[1].videoDetails.title}](${this.songs[1].videoDetails.video_url})`);
-                this.options.skip = false;
-                this.songs.shift();
+            if(this.server) {
+                if(this.server.info.language == 'es') {
+                    if(this.options.loop === true && this.options.skip === false) {
+                        embed.setDescription(`Modo repeticion activado! Volvera a sonar:
+                        [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
+                    } else {
+                        embed.setDescription(`${this.options.skip === true ? "Skip! - " : ""}Acaba de sonar:
+                        [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})
+                        
+                        La siguiente es:
+                        [${this.songs[1].videoDetails.title}](${this.songs[1].videoDetails.video_url})`);
+                        this.options.skip = false;
+                        this.songs.shift();
+                    }
+                }
+                if(this.server.info.language == 'en') {
+                    if(this.options.loop === true && this.options.skip === false) {
+                        embed.setDescription(`Loop mode activated! Will play again:
+                        [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})`);
+                    } else {
+                        embed.setDescription(`${this.options.skip === true ? "Skip! - " : ""}Just played:
+                        [${this.songs[0].videoDetails.title}](${this.songs[0].videoDetails.video_url})
+                        
+                        Next is:
+                        [${this.songs[1].videoDetails.title}](${this.songs[1].videoDetails.video_url})`);
+                        this.options.skip = false;
+                        this.songs.shift();
+                    }
+                }
             }
             embed.setTimestamp();
             embed.setColor("RANDOM");
