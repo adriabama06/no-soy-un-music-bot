@@ -2,6 +2,7 @@
 src/config.ts.dev
 lib/*
 .vscode
+json.sqlite
 
 # Logs
 logs

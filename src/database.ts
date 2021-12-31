@@ -257,8 +257,7 @@ export class QuickDB extends DataBase {
         if(this.has(id)) {
             return false;
         }
-        quickdb.add(id, 1);
-        quickdb.set(id, {
+        var s: DataBaseInterface = {
             info: {
                 id: id,
                 language: config.default.language,
@@ -274,7 +273,9 @@ export class QuickDB extends DataBase {
                 safesearch: config.default.safesearch,
                 user: user
             }
-        });
+        };
+        this.servers.set(id, s);
+        quickdb.set(id, s);
         return true;
     }
     public async delete(id: string): Promise<boolean> {
@@ -286,10 +287,8 @@ export class QuickDB extends DataBase {
     }
     protected async Sync(reload?: boolean): Promise<void> {
         var serv: DataBaseInterface[] = [];
-        for(const {ID: id, data: server} of quickdb.all()) {
-            if(!server) {
-                continue;
-            }
+        for(const {ID: id, data} of quickdb.all()) {
+            var server: DataBaseInterface = JSON.parse(data);
             const info = server.info;
             const queues = server.queues;
             const safesearch = server.safesearch;

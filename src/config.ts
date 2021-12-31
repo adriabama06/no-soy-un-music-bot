@@ -7,8 +7,8 @@ var config: ConfigInterface = {
     youtube: {
         token: "https://console.cloud.google.com/apis/dashboard"
     },
-    database: 'mysql',
-    mysql: {
+    database: 'quick.db',
+    /*mysql: { // uncoment this if you select mysql
         user: "user",
         password: "shh secret",
         host: "someip",
@@ -19,7 +19,7 @@ var config: ConfigInterface = {
             info: "info"
         },
         maxQueueSize: 535 // Max size of the queue is 535 at mysql
-    },
+    },*/
     default: {
         prefix: "!!", // if you use Discord Message support, this is the prefix
         safesearch: "0", // 0 = none, 1 = moderate, 2 = strict
