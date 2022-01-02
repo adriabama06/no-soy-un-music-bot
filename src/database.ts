@@ -228,7 +228,7 @@ export class QuickDB extends DataBase {
             return false;
         }
         server.info = data;
-        quickdb.set(data.id, JSON.stringify(server));
+        quickdb.set(`servers.${data.id}`, JSON.stringify(server));
         return true;
     }
     public async setQueues(data: Queues): Promise<boolean> {
@@ -237,7 +237,7 @@ export class QuickDB extends DataBase {
             return false;
         }
         server.queues = data;
-        quickdb.set(data.id, JSON.stringify(server));
+        quickdb.set(`servers.${data.id}`, JSON.stringify(server));
         return true;
     }
     public async setSafesearch(data: SafeSearch): Promise<boolean> {
@@ -246,7 +246,7 @@ export class QuickDB extends DataBase {
             return false;
         }
         server.safesearch = data;
-        quickdb.set(data.id, JSON.stringify(server));
+        quickdb.set(`servers.${data.id}`, JSON.stringify(server));
         return true;
     }
     public async add(id: string, user: string = '%false%'): Promise<boolean> {
@@ -271,30 +271,29 @@ export class QuickDB extends DataBase {
             }
         };
         this.servers.set(id, s);
-        quickdb.set(id, JSON.stringify(s));
+        quickdb.set(`servers.${id}`, JSON.stringify(s));
         return true;
     }
     public async delete(id: string): Promise<boolean> {
         if(!this.has(id)) {
             return false;
         }
-        quickdb.delete(id);
+        quickdb.delete(`servers.${id}`);
         return true;
     }
     protected async Sync(reload?: boolean): Promise<void> {
         if(reload) {
             this.servers.clear();
         }
-        for(const { ID, data } of quickdb.all()) {
-            var server = JSON.parse(data);
-            console.log(server);
-            console.log(server.queues);
+        var serversData = quickdb.get('servers');
+        for(var id in serversData) {
+            var server = JSON.parse(serversData[id]);
             var queue = server.queues.queue;
-            if(typeof queue === 'string') {
+            if(typeof queue == 'string') {
                 queue = await ParseQueue(queue);
             }
             server.queues.queue = queue;
-            this.servers.set(server.info.id, server);
+            this.servers.set(id, server);
         }
         return;
     }

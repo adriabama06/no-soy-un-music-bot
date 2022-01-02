@@ -193,6 +193,13 @@ client.on('interactionCreate', async (interaction: Interaction) => {
         if(languageSelected == 'en') {
             await interaction.editReply({ content: 'Commands loaded' });
         }
+        setTimeout(() => {
+            if(interaction.guild) {
+                try {
+                    interaction.deleteReply();
+                } catch (err) { }
+            }
+        }, 5 * 1000);
     }
     
     if(Commands.has(interaction.commandName)) {
