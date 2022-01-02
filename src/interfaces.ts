@@ -19,9 +19,9 @@ export interface ConfigInterface {
         token: string
     },
     database: 'mysql' | 'quick.db',
+    syncInterval: number,
     mysql?: mysql.ConnectionConfig & {tables: MysqlTables, maxQueueSize: number}, // Max size of the queue is 535 at mysql
     default: {
-        prefix: string,
         safesearch: '0' | '1' | '2',
         language: LanguageType
     }

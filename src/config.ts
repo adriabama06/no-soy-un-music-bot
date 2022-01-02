@@ -1,4 +1,5 @@
 import { ConfigInterface } from './interfaces';
+import { MinutesToMilliseconds } from './util';
 
 var config: ConfigInterface = {
     discord: {
@@ -8,6 +9,7 @@ var config: ConfigInterface = {
         token: "https://console.cloud.google.com/apis/dashboard"
     },
     database: 'quick.db',
+    syncInterval: MinutesToMilliseconds(5),
     /*mysql: { // uncoment this if you select mysql
         user: "user",
         password: "shh secret",
@@ -21,7 +23,6 @@ var config: ConfigInterface = {
         maxQueueSize: 535 // Max size of the queue is 535 at mysql
     },*/
     default: {
-        prefix: "!!", // if you use Discord Message support, this is the prefix
         safesearch: "0", // 0 = none, 1 = moderate, 2 = strict
         language: "en" // set language what prefer, en or es, you can add more at the code
     }

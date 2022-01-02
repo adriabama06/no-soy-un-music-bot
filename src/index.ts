@@ -15,16 +15,21 @@ var DataBase: MySql | QuickDB;
 
 if(config.database == 'mysql') {
     if(!config.mysql) {
-        console.log('[MySql] Bad config.ts');
+        if(config.default.language == 'es') {
+            console.log('[Error] Error en config.ts, tienes puesto config.database en mysql pero no se encontro configuracion para mysql');
+            
+        } else {
+            console.log('[Error] Bad config.ts config file, you set config.database to mysql but you dont have mysql config');
+        }
         process.exit(1);
     }
     DataBase = new MySql(config.mysql, {
-        SyncInterval: 5 * 1000 * 60
+        SyncInterval: config.syncInterval
     });
 }
 if(config.database == 'quick.db') {
     DataBase = new QuickDB({
-        SyncInterval: 5 * 1000 * 60
+        SyncInterval: config.syncInterval
     });
 }
 
@@ -37,13 +42,13 @@ client.on('ready', async () => {
     loadCommands('cmds', Commands, Alias);
     console.log(`Bot listo como ${client.user?.username}#${client.user?.discriminator} (${client.user?.id})`);
     client.user?.setPresence({
-        activities: [{ name: `-> ${config.default.prefix}help o /help, en ${client.guilds.cache.size} servidores`, type: 'PLAYING' }],
-        status: 'online'
+        activities: [{ name: `-> /help, en ${client.guilds.cache.size} servidores`, type: 'LISTENING', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }],
+        status: 'idle'
     });
     setInterval(async () => {
         client.user?.setPresence({
-            activities: [{ name: `-> ${config.default.prefix}help o /help, en ${client.guilds.cache.size} servidores`, type: 'PLAYING' }],
-            status: 'online'
+            activities: [{ name: `-> /help, en  ${client.guilds.cache.size} servidores`, type: 'LISTENING', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }],
+            status: 'idle'
         });
     }, 2 * 60 * 1000);
     if(client.user) {

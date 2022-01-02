@@ -71,3 +71,7 @@ export async function UnParseQueue(songs: ytdl.videoInfo[]): Promise<string[]> {
     }
     return parsed;
 }
+
+export function MinutesToMilliseconds(minutes: number): number {
+    return minutes * 60 * 1000;
+}

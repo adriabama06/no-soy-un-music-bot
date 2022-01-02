@@ -219,6 +219,8 @@ export class MySql extends DataBase {
 export class QuickDB extends DataBase {
     constructor(Config: DataBaseCheckInterface) {
         super(Config);
+        
+        this.Sync();
     }
     public async setInfo(data: Info): Promise<boolean> {
         var server = this.servers.get(data.id);
@@ -226,9 +228,7 @@ export class QuickDB extends DataBase {
             return false;
         }
         server.info = data;
-        quickdb.set(data.id, {
-            server
-        });
+        quickdb.set(data.id, JSON.stringify(server));
         return true;
     }
     public async setQueues(data: Queues): Promise<boolean> {
@@ -237,9 +237,7 @@ export class QuickDB extends DataBase {
             return false;
         }
         server.queues = data;
-        quickdb.set(data.id, {
-            server
-        });
+        quickdb.set(data.id, JSON.stringify(server));
         return true;
     }
     public async setSafesearch(data: SafeSearch): Promise<boolean> {
@@ -248,9 +246,7 @@ export class QuickDB extends DataBase {
             return false;
         }
         server.safesearch = data;
-        quickdb.set(data.id, {
-            server
-        });
+        quickdb.set(data.id, JSON.stringify(server));
         return true;
     }
     public async add(id: string, user: string = '%false%'): Promise<boolean> {
@@ -275,7 +271,7 @@ export class QuickDB extends DataBase {
             }
         };
         this.servers.set(id, s);
-        quickdb.set(id, s);
+        quickdb.set(id, JSON.stringify(s));
         return true;
     }
     public async delete(id: string): Promise<boolean> {
@@ -286,29 +282,19 @@ export class QuickDB extends DataBase {
         return true;
     }
     protected async Sync(reload?: boolean): Promise<void> {
-        var serv: DataBaseInterface[] = [];
-        for(const {ID: id, data} of quickdb.all()) {
-            var server: DataBaseInterface = JSON.parse(data);
-            const info = server.info;
-            const queues = server.queues;
-            const safesearch = server.safesearch;
-            serv.push({
-                safesearch,
-                queues,
-                info
-            });
-        }
         if(reload) {
             this.servers.clear();
         }
-        for(var i = 0; i < serv.length; i++) {
-            var ser = serv[i];
-            var queue = ser.queues.queue;
+        for(const { ID, data } of quickdb.all()) {
+            var server = JSON.parse(data);
+            console.log(server);
+            console.log(server.queues);
+            var queue = server.queues.queue;
             if(typeof queue === 'string') {
                 queue = await ParseQueue(queue);
             }
-            ser.queues.queue = queue;
-            this.servers.set(ser.info.id, ser);
+            server.queues.queue = queue;
+            this.servers.set(server.info.id, server);
         }
         return;
     }
