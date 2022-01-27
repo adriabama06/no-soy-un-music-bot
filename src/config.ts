@@ -6,6 +6,7 @@ var config: ConfigInterface = {
         token: "https://discord.com/developers/"
     },
     youtube: {
+        searchType: 'notoken',
         token: "https://console.cloud.google.com/apis/dashboard"
     },
     database: 'quick.db',

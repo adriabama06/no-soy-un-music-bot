@@ -13,7 +13,7 @@ import {
     createAudioPlayer,
     createAudioResource,
     StreamType,
-    AudioPlayerState
+    AudioPlayerState,
 } from '@discordjs/voice';
 import { MessageEmbed, StageChannel, TextBasedChannels, VoiceChannel } from 'discord.js';
 import ytdl, { videoInfo } from 'ytdl-core';
@@ -39,7 +39,7 @@ export class ServerManager {
         this.connection = joinVoiceChannel({
             channelId: channel.id,
             guildId: channel.guild.id,
-            adapterCreator: channel.guild.voiceAdapterCreator,
+            adapterCreator: channel.guild.voiceAdapterCreator
         });
         return this.connection;
     }
@@ -86,7 +86,7 @@ export class ServerManager {
             this.createPlayer();
         }
         this.audioresource = createAudioResource(await ytldDiscord(this.songs[0].videoDetails.video_url, { filter: 'audioonly', quality: 'lowest' /* quality lowest for fast play and minus bitrate */ }), { inputType: StreamType.Opus, inlineVolume: true });
-        this.audioresource.audioPlayer?.on('error', async (err) => {
+        this.audioresource.audioPlayer?.on('error', async (err: any) => {
             console.log(err);
             if(this.channel) {
                 var embed = new MessageEmbed();

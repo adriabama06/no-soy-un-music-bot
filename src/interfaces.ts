@@ -16,6 +16,7 @@ export interface ConfigInterface {
         token: string
     },
     youtube: {
+        searchType: 'youtube/v3' | 'notoken',
         token: string
     },
     database: 'mysql' | 'quick.db',
