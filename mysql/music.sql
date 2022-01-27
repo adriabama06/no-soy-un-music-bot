@@ -35,18 +35,6 @@ CREATE TABLE `info` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `prefix`
---
-
-CREATE TABLE `prefix` (
-  `id` varchar(30) NOT NULL,
-  `prefix` varchar(30) NOT NULL DEFAULT '!!',
-  `user` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- --------------------------------------------------------
-
---
 -- Estructura de tabla para la tabla `queues`
 --
 
