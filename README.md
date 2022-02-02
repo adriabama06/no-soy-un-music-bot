@@ -24,9 +24,6 @@ npm start
 node .
 ```
 
-## Importante:
-Es importante crear la base de datos, tienes en ./setup un .sql para phpmyadmin o directamente en setup.js ya te genera las **tablas** *(tienes que crear tu la base de datos)* para poder funcionar
-
 ## Objetivos:
 
 - [x] Crear cliente para conectar la base de datos [MariaDB](https://mariadb.org/) con el bot
