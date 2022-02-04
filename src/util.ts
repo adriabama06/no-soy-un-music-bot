@@ -25,14 +25,16 @@ export async function messageDelete(message: Message, userid?: string, timeout: 
         });
         
         collector.on('end', async (collected, reason) => {
-            if(message.deleted == false && message.deletable == true && typeof message.delete == 'function') {
-                await message.delete();
-            }
-            if(reason && reason === 'user') {
-                resolve(true);
-            } else {
+            if(reason && reason == 'messageDelete') {
                 resolve(false);
+                return;
             }
+            if(message.deleted == false && message.deletable == true) {
+                await message.delete();
+                resolve(true);
+                return;
+            }
+            resolve(false);
         });
     });
 }

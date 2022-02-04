@@ -216,8 +216,13 @@ const command: CommandInterface = {
                 }
             }
         });
-        collector.on('end', async () => {
-            await msg.delete();
+        collector.on('end', async (collected, reason) => {
+            if(reason == 'messageDelete') {
+                return;
+            }
+            if(msg.deleted == false && msg.deletable == true) {
+                await msg.delete();
+            }
         });
         return;
     }

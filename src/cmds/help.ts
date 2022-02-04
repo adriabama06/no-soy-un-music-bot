@@ -120,7 +120,7 @@ const command: CommandInterface = {
         }
         embed.setDescription(menu[0]);
 
-        const msg = await interaction.channel.send({
+        var msg = await interaction.channel.send({
             embeds: [embed]
         });
         if(texts.length < size) {
@@ -215,8 +215,13 @@ const command: CommandInterface = {
                 }
             }
         });
-        collector.on('end', async () => {
-            await msg.delete();
+        collector.on('end', async (collected, reason) => {
+            if(reason == 'messageDelete') {
+                return;
+            }
+            if(msg.deleted == false && msg.deletable == true) {
+                await msg.delete();
+            }
         });
         return true;
     }
