@@ -120,7 +120,7 @@ const command: CommandInterface = {
         }
         embed.setDescription(menu[0]);
 
-        var msg = await interaction.channel.send({
+        const msg = await interaction.channel.send({
             embeds: [embed]
         });
         if(texts.length < size) {

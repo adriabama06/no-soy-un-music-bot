@@ -50,88 +50,16 @@ client.on('ready', async () => {
             activities: [{ name: `-> /help, en  ${client.guilds.cache.size} servidores`, type: 'LISTENING', url: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' }],
             status: 'idle'
         });
-    }, 2 * 60 * 1000);
+    }, 30 * 60 * 1000);
     if(client.user) {
-        client.application?.commands.set([{
-            name: 'setup',
-            type: 'CHAT_INPUT',
-            description: 'Set the language on this server',
-            options: [
-                {
-                    name: 'language',
-                    type: 'STRING',
-                    required: true,
-                    description: 'languages to set',
-                    choices: [
-                        {name: 'Carga los comandos en Español', value: 'es'},
-                        {name: 'Load the commands in English', value: 'en'}
-                    ]
-                }
-            ]
-        }]);
-    }
-});
-
-
-/**
- * @see https://support-dev.discord.com/hc/en-us/articles/4404772028055-Message-Content-Access-Deprecation-for-Verified-Bots
- * @example
- * client.on('messageCreate', async (message) => {
- *  return console.log('Please read the article first');
- * });
- */
-client.on('interactionCreate', async (interaction: Interaction) => {
-    if(!interaction.isCommand() || !interaction.guild || !interaction.member) {
-        return;
-    }
-    if(!Servers.has(interaction.guild?.id)) {
-        Servers.set(interaction.guild.id, new ServerManager());
-    }
-    if(!DataBase.has(interaction.guild.id)) {
-        await DataBase.add(interaction.guild.id, interaction.member.user.id);
-    }
-
-    var DataBaseServer = DataBase.get(interaction.guild.id);
-    if(!DataBaseServer) {
-        return;
-    }
-    var music = Servers.get(interaction.guild.id);
-    if(!music) {
-        return;
-    }
-    music.setServer(DataBaseServer);
-
-    if(DataBaseServer.info.user === '%false%') {
-        await DataBase.setInfo({
-            id: interaction.guild.id,
-            language: config.default.language,
-            user: interaction.member.user.id,
-        });
-    }
-
-    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) : /${interaction.commandName}`);
-    for(const v of interaction.options.data) {
-        console.log(`${v.name}${v.value ? ` - ${v.value.toString()}` : ''}`);
-    }
-    
-    if(interaction.commandName === 'setup') {
-        var languageSelected = interaction.options.getString('language');
+        var json: ApplicationCommandData[] = [];
+        var languageSelected = config.default.language;
         if(!languageSelected) {
             return;
         }
         if(!isLanguageType(languageSelected)) {
             return;
         }
-        await DataBase.setInfo({
-            id: interaction.guild.id,
-            language: languageSelected,
-            user: interaction.member.user.id,
-        });
-        await interaction.reply({ 
-            content: 'Loading commands...',
-            ephemeral: false
-        });
-        var toset: ApplicationCommandData[] = [];
         for(const Command of Commands) {
             var description: string = "Undefined: description";
             if(languageSelected == 'es') {
@@ -153,7 +81,7 @@ client.on('interactionCreate', async (interaction: Interaction) => {
                     description = des;
                 }
             }
-            toset.push({
+            json.push({
                 name: Command[0],
                 description: description,
                 options: opts
@@ -180,26 +108,66 @@ client.on('interactionCreate', async (interaction: Interaction) => {
                     description = des;
                 }
             }
-            toset.push({
+            json.push({
                 name: Command[0],
                 description: description,
                 options: opts
             });
         }
-        await interaction.guild.commands.set(toset);
-        if(languageSelected == 'es') {
-            await interaction.editReply({ content: 'Comandos cargados' });
+        const res = await client.application?.commands.set(json);
+        if(!res) {
+            console.log('Error setting commands to the bot');
+            return;
         }
-        if(languageSelected == 'en') {
-            await interaction.editReply({ content: 'Commands loaded' });
+        for(const r of res) {
+            console.log(`Ok: ${r[1].name}`);
         }
-        setTimeout(() => {
-            if(interaction.guild) {
-                try {
-                    interaction.deleteReply();
-                } catch (err) { }
-            }
-        }, 5 * 1000);
+    }
+});
+
+
+/**
+ * @see https://support-dev.discord.com/hc/en-us/articles/4404772028055-Message-Content-Access-Deprecation-for-Verified-Bots
+ * @example
+ * client.on('messageCreate', async (message) => {
+ *  return console.log('Please read the article first');
+ * });
+ */
+client.on('interactionCreate', async (interaction: Interaction) => {
+    if(!interaction.isCommand() || !interaction.guild || !interaction.member) {
+        return;
+    }
+    var music = Servers.get(interaction.guild.id);
+    if(!music) {
+        Servers.set(interaction.guild.id, new ServerManager());
+        music = Servers.get(interaction.guild.id);
+        if(!music) {
+            return;
+        }
+    }
+
+    var DataBaseServer = DataBase.get(interaction.guild.id);
+    if(!DataBaseServer) {
+        await DataBase.add(interaction.guild.id, interaction.member.user.id);
+        DataBaseServer = DataBase.get(interaction.guild.id);
+        if(!DataBaseServer) {
+            return;
+        }
+    }
+
+    music.setServer(DataBaseServer);
+
+    if(DataBaseServer.info.user === '%false%') {
+        await DataBase.setInfo({
+            id: interaction.guild.id,
+            language: config.default.language,
+            user: interaction.member.user.id,
+        });
+    }
+    
+    console.log(`Slash : ${interaction.member.user.username}#${interaction.member.user.discriminator} (${interaction.member.user.id}) : /${interaction.commandName}`);
+    for(const v of interaction.options.data) {
+        console.log(`${v.name}${v.value ? ` - ${v.value.toString()}` : ''}`);
     }
     
     if(Commands.has(interaction.commandName)) {
