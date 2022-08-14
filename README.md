@@ -45,4 +45,4 @@ node .
 - [discord.js](https://github.com/discordjs/discord.js) - Para el bot de discord
 - [mysql](https://github.com/mysqljs/mysql) - Para el acceso a una Base de Datos [MariaDB](https://mariadb.org/)
 - [ytdl-core](https://github.com/fent/node-ytdl-core) - Para obtener la informacion de forma rapida de un video de [YouTube](https://www.youtube.com/watch?v=dQw4w9WgXcQ)
-- [ytdl-core-discord](https://github.com/amishshah/ytdl-core-discord) - Para tener la entrada de video en [Opus](https://opus-codec.org/) para evitar usar ffmpeg para que vaya más rapido # no lo uso temporalmente por pruebas que estoy haciendo
+- [ytdl-core-discord](https://github.com/amishshah/ytdl-core-discord) - Para tener la entrada de video en [Opus](https://opus-codec.org/)
